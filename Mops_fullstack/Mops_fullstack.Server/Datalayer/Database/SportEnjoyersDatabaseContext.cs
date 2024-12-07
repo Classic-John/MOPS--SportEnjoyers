@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Mops_fullstack.Server.Datalayer.Models;
 using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
@@ -91,4 +92,14 @@ public partial class SportEnjoyersDatabaseContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+}
+public static class DbSetExtensions
+{
+    public static DbContext GetDbContext<TEntity>(this DbSet<TEntity> dbSet) where TEntity : class
+    {
+        var infrastructure = dbSet as IInfrastructure<IServiceProvider>;
+        var serviceProvider = infrastructure.Instance;
+        var currentDbContext = serviceProvider.GetService(typeof(ICurrentDbContext)) as ICurrentDbContext;
+        return currentDbContext.Context;
+    }
 }
