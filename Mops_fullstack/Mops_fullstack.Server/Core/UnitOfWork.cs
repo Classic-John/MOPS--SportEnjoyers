@@ -5,13 +5,13 @@ namespace Mops_fullstack.Server.Core
 {
     public class UnitOfWork
     {
-        FieldRepo? FieldRepo { get; set; }
-        GroupRepo? GroupRepo { get; set; }
-        MatchRepo? MatchRepo { get; set; }
-        MessageRepo? MessageRepo { get; set; }
-        OwnerRepo? OwnerRepo { get; set; }
-        PlayerRepo? PlayerRepo { get; set; }
-        ThreadRepo? ThreadRepo { get; set; }
+        public FieldRepo? FieldRepo { get; set; }
+        public GroupRepo? GroupRepo { get; set; }
+        public MatchRepo? MatchRepo { get; set; }
+        public MessageRepo? MessageRepo { get; set; }
+        public OwnerRepo? OwnerRepo { get; set; }
+        public PlayerRepo? PlayerRepo { get; set; }
+        public ThreadRepo? ThreadRepo { get; set; }
 
         public UnitOfWork(FieldRepo? fieldRepo, GroupRepo? groupRepo, MatchRepo? matchRepo, MessageRepo? messageRepo, OwnerRepo? ownerRepo,
             PlayerRepo? playerRepo, ThreadRepo? threadRepo,SportEnjoyersDatabaseContext context)
