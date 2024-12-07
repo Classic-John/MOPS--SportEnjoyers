@@ -1,0 +1,6 @@
+@Mops_fullstack.Server_HostAddress = http://localhost:5250
+
+GET {{Mops_fullstack.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
