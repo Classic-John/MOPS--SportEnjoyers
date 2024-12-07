@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using Mops_fullstack.Server.Datalayer.BaseClass;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
+using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Player :BaseEntity, IMapperConvert<Player,PlayerDTO>
+public partial class Player :BaseEntity, IPlayer,IMapperConvert<Player,PlayerDTO>
 {
     [Required]
     public string Name { get; set; } = null!;

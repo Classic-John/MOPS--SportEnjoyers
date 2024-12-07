@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using Mops_fullstack.Server.Datalayer.BaseClass;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
+using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Field : BaseEntity, IMapperConvert<Field, FieldDTO>
+public partial class Field : BaseEntity, IField,IMapperConvert<Field, FieldDTO>
 {
     [Required]
     public int AreaOwnerId { get; set; }

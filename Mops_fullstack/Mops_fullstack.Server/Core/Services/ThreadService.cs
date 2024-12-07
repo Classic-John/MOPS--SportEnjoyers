@@ -2,7 +2,7 @@
 
 namespace Mops_fullstack.Server.Core.Services
 {
-    public class MatchService : IMatchService
+    public class ThreadService : IThreadService
     {
     }
 }
