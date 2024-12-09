@@ -8,7 +8,7 @@ using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Match : BaseEntity, IMatch,IMapperConvert<Match, MatchDTO>
+public partial class Match : BaseEntity, IMatch
 {
     [Required]
     public DateTime MatchDate { get; set; }

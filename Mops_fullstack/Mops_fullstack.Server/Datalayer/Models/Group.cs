@@ -8,7 +8,7 @@ using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Group : BaseEntity,IGroup, IMapperConvert<Group, GroupDTO>
+public partial class Group : BaseEntity, IGroup
 {
     [Required]
     public int? GroupCreator { get; set; }

@@ -11,6 +11,9 @@ namespace Mops_fullstack.Server.Core.Services
         public bool AddItem(Owner entity)
             => _unitOfWork.OwnerRepo.Add(entity);
 
+        public Owner GetItem(int? id)
+            => GetItems().FirstOrDefault(owner => owner.Id == id.Value);
+
         public List<Owner> GetItems()
             => _unitOfWork.OwnerRepo.GetAllItems();
 

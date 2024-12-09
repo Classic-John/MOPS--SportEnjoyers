@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class FieldDTO : BaseEntity, IMapperConvert<FieldDTO,Field>
+    public class FieldDTO : BaseEntity
     {
         [Required]
         public int AreaOwnerId { get; set; }

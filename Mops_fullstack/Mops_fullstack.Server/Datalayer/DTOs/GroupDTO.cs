@@ -6,7 +6,7 @@ using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class GroupDTO : BaseEntity, IMapperConvert<GroupDTO,Group>
+    public class GroupDTO : BaseEntity
     {
         [Required]
         public int? GroupCreator { get; set; }

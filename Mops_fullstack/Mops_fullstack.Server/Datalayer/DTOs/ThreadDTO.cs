@@ -6,7 +6,7 @@ using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class ThreadDTO : BaseEntity, IMapperConvert<ThreadDTO,Thread>
+    public class ThreadDTO : BaseEntity
     {
         [Required]
         public int AssociatedGroupId { get; set; }

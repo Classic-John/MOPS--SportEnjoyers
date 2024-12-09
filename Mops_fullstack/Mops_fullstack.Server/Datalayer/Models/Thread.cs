@@ -8,7 +8,7 @@ using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Thread : BaseEntity, IThread,IMapperConvert<Thread,ThreadDTO>
+public partial class Thread : BaseEntity, IThread
 {
     [Required]
     public int AssociatedGroupId { get; set; }

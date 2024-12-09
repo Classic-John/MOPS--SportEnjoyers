@@ -5,7 +5,7 @@ using Mops_fullstack.Server.Datalayer.Models;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class PlayerDTO : BaseEntity, IMapperConvert<PlayerDTO,Player>
+    public class PlayerDTO : BaseEntity
     {
         [Required]
         public string Name { get; set; } = null!;

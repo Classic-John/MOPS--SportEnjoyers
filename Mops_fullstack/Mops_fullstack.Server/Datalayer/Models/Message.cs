@@ -8,7 +8,7 @@ using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Message : BaseEntity, IMessage,IMapperConvert<Message,MessageDTO>
+public partial class Message : BaseEntity, IMessage
 {
     public string? Text { get; set; }
     [Required]

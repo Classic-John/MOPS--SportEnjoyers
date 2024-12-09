@@ -7,7 +7,7 @@ using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Owner : BaseEntity, IOwner,IMapperConvert<Owner,OwnerDTO>
+public partial class Owner : BaseEntity, IOwner
 {
     public virtual ICollection<Field> Fields { get; set; } = new List<Field>();
     public virtual ICollection<Player> Players { get; set; } = new List<Player>();

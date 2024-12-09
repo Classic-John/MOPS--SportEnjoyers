@@ -12,6 +12,9 @@ namespace Mops_fullstack.Server.Core.Services
         public bool AddItem(Player entity)
             => _unitOfWork.PlayerRepo.Add(entity);
 
+        public Player GetItem(int? id)
+            => GetItems().FirstOrDefault(player => player.Id==id.Value);
+
         public List<Player> GetItems()
             => _unitOfWork.PlayerRepo.GetAllItems();
 

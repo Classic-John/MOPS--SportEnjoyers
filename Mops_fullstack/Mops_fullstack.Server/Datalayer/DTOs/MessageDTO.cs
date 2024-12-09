@@ -6,7 +6,7 @@ using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class MessageDTO : BaseEntity, IMapperConvert<MessageDTO,Message>
+    public class MessageDTO : BaseEntity
     {
         public string? Text { get; set; }
         [Required]

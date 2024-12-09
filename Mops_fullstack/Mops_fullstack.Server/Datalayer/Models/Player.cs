@@ -8,7 +8,7 @@ using Mops_fullstack.Server.Datalayer.Interfaces;
 
 namespace Mops_fullstack.Server.Datalayer.Models;
 
-public partial class Player :BaseEntity, IPlayer,IMapperConvert<Player,PlayerDTO>
+public partial class Player :BaseEntity, IPlayer
 {
     [Required]
     public string Name { get; set; } = null!;

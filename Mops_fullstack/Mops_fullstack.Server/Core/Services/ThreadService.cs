@@ -11,6 +11,9 @@ namespace Mops_fullstack.Server.Core.Services
         public bool AddItem(Datalayer.Models.Thread entity)
             => _unitOfWork.ThreadRepo.Add(entity);
 
+        public Datalayer.Models.Thread GetItem(int? id)
+            => GetItems().FirstOrDefault(item => item.Id == id.Value);
+
         public List<Datalayer.Models.Thread> GetItems()
             => _unitOfWork.ThreadRepo.GetAllItems();
 

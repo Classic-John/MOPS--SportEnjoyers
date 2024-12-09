@@ -5,7 +5,7 @@ using Mops_fullstack.Server.Datalayer.Models;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class MatchDTO : BaseEntity, IMapperConvert<MatchDTO,Match>
+    public class MatchDTO : BaseEntity
     {
         [Required]
         public DateTime MatchDate { get; set; }

@@ -11,6 +11,9 @@ namespace Mops_fullstack.Server.Core.Services
         public bool AddItem(Field entity)
             => _unitOfWork.FieldRepo.Add(entity);
 
+        public Field GetItem(int? id)
+            => GetItems().FirstOrDefault(item => item.Id == id.Value);
+
         public List<Field> GetItems()
             => _unitOfWork.FieldRepo.GetAllItems();
 

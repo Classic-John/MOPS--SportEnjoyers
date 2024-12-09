@@ -11,6 +11,9 @@ namespace Mops_fullstack.Server.Core.Services
         public bool AddItem(Group entity)
             => _unitOfWork.GroupRepo.Add(entity);
 
+        public Group GetItem(int? id)
+            => GetItems().FirstOrDefault(group => group.Id == id.Value);
+
         public List<Group> GetItems()
             => _unitOfWork.GroupRepo.GetAllItems();
 

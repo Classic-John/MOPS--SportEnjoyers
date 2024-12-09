@@ -11,6 +11,9 @@ namespace Mops_fullstack.Server.Core.Services
         public bool AddItem(Match entity)
             => _unitOfWork.MatchRepo.Add(entity);
 
+        public Match GetItem(int? id)
+            => GetItems().FirstOrDefault(match => match.Id==id.Value);
+
         public List<Match> GetItems()
             => _unitOfWork.MatchRepo.GetAllItems();
 

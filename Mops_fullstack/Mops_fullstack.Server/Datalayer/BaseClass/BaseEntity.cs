@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 namespace Mops_fullstack.Server.Datalayer.BaseClass
 {
-    public class BaseEntity
+    public abstract class BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
