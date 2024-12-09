@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 using Mops_fullstack.Server.Core;
 using Mops_fullstack.Server.Core.Services;
+using Mops_fullstack.Server.Datalayer.Database;
 using Mops_fullstack.Server.Datalayer.Interfaces;
 using Mops_fullstack.Server.Datalayer.Repositories;
 using Mops_fullstack.Server.Datalayer.Service_interfaces;
@@ -12,6 +15,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddScoped<FieldRepo>();
 builder.Services.AddScoped<GroupRepo>();
@@ -30,6 +34,9 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IThreadService, ThreadService>();
+
+builder.Services.AddDbContext<SportEnjoyersDatabaseContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
