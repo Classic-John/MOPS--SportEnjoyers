@@ -16,7 +16,7 @@ namespace Mops_fullstack.Server.Controllers
         public MatchController(MatchService matchService)
            => _matchService = matchService;
 
-        [HttpGet("GetMatches")]
+        /*[HttpGet("GetMatches")]
         public IEnumerable<MatchDTO> GetMatches()
             => _matchService.GetItems().Select(match => MapperConvert<Match, MatchDTO>.ConvertItem(match)).ToList();
 
@@ -42,7 +42,7 @@ namespace Mops_fullstack.Server.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteMatch(int? id)
-            => _matchService.RemoveItem(_matchService.GetItem(id)) ? Ok() : NotFound();
+            => _matchService.RemoveItem(_matchService.GetItem(id)) ? Ok() : NotFound();*/
 
     }
 }

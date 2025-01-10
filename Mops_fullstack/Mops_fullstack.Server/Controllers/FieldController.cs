@@ -17,7 +17,7 @@ namespace Mops_fullstack.Server.Controllers
         public FieldController(FieldService fieldService)
             => _fieldService = fieldService;
 
-        [HttpGet("GetFields")]
+        /*[HttpGet("GetFields")]
         public IEnumerable<FieldDTO> GetFields()
             => _fieldService.GetItems().Select(field => MapperConvert<Field, FieldDTO>.ConvertItem(field)).ToList();
 
@@ -40,7 +40,7 @@ namespace Mops_fullstack.Server.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteField(int? id)
-            => _fieldService.RemoveItem(_fieldService.GetItem(id)) ? Ok() : NotFound();
+            => _fieldService.RemoveItem(_fieldService.GetItem(id)) ? Ok() : NotFound();*/
 
 
     }

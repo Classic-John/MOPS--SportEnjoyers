@@ -16,7 +16,7 @@ namespace Mops_fullstack.Server.Controllers
         private readonly ThreadService _threadService;
         public ThreadController(ThreadService threadService)
             => _threadService = threadService;
-        [HttpGet("GetThreads")]
+        /*[HttpGet("GetThreads")]
         public IEnumerable<ThreadDTO> GetThreads()
             => _threadService.GetItems().Select(player => MapperConvert<Thread, ThreadDTO>.ConvertItem(player)).ToList();
 
@@ -42,6 +42,6 @@ namespace Mops_fullstack.Server.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteThread(int? id)
-            => _threadService.RemoveItem(_threadService.GetItem(id)) ? Ok() : NotFound();
+            => _threadService.RemoveItem(_threadService.GetItem(id)) ? Ok() : NotFound();*/
     }
 }

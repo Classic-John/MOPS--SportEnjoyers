@@ -12,7 +12,14 @@ public partial class Match : BaseEntity, IMatch
 {
     [Required]
     public DateTime MatchDate { get; set; }
+
     [Required]
-    public int AssociatedGroupId { get; set; }
-    public virtual Group AssociatedGroup { get; set; } = null!;
+    public int GroupId { get; set; }
+
+    public Group Group { get; set; } = null!;
+
+    [Required]
+    public int FieldId { get; set; }
+
+    public Field Field { get; set; } = null!;
 }

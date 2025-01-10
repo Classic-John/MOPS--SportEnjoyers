@@ -8,7 +8,7 @@ using Mops_fullstack.Server.Datalayer.Service_interfaces;
 
 namespace Mops_fullstack.Server.Controllers
 {
-    [Route("api/[controller]")]
+    /*[Route("api/[controller]")]
     [ApiController]
     public class OwnerController : ControllerBase
     {
@@ -43,5 +43,5 @@ namespace Mops_fullstack.Server.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteOwner(int? id)
             => _ownerService.RemoveItem(_ownerService.GetItem(id)) ? Ok() : NotFound();
-    }
+    }*/
 }

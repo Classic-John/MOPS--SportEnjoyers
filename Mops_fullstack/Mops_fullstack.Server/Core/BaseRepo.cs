@@ -28,6 +28,10 @@ namespace Mops_fullstack.Server.Core
         }
         public List<T> GetAllItems()
             => _repoItems;
+
+        public DbSet<T> GetTable()
+            => _repoTable;
+
         public bool Update(T repoItem)
         {
             try

@@ -7,4 +7,14 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\mops_fullstack.client\browser\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="src\app\NewFolder\**" />
+    <None Remove="src\app\pages\NewFolder\**" />
+    <TypeScriptConfiguration Remove="src\app\NewFolder\**" />
+    <TypeScriptConfiguration Remove="src\app\pages\NewFolder\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="public\NewFolder\" />
+    <Folder Include="src\NewFolder\" />
+  </ItemGroup>
 </Project>

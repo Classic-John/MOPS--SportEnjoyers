@@ -11,7 +11,9 @@ namespace Mops_fullstack.Server.Datalayer.Models;
 public partial class Thread : BaseEntity, IThread
 {
     [Required]
-    public int AssociatedGroupId { get; set; }
-    public virtual Group AssociatedGroup { get; set; } = null!;
-    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+    public int GroupId { get; set; }
+
+    public Group Group { get; set; } = null!;
+
+    public ICollection<Message> Messages { get; set; } = [];
 }

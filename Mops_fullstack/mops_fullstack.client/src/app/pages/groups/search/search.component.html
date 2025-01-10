@@ -1,0 +1,32 @@
+<app-sidenav>
+  <div nav>
+    <h4>Search groups:</h4>
+
+    <form [formGroup]="filterForm" (ngSubmit)="search(filterForm.getRawValue())">
+      <mat-form-field>
+        <mat-label>Group name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Group owner</mat-label>
+        <input matInput formControlName="owner" />
+      </mat-form-field>
+      <div class="form-field" *ngIf="isLoggedIn()">
+        <mat-slide-toggle formControlName="yours" labelPosition="before">Your groups</mat-slide-toggle>
+      </div>
+      <br />
+      <button mat-button class="form-submit-button" type="submit">Search</button>
+    </form>
+  </div>
+  <div content>
+    <h2>Group list</h2>
+    <app-cardlist [itemList]="groupList" linkPath="id">
+      <ng-template let-group>
+        <div>
+          <p>Group name: {{group.name}}</p>
+          <p>Group owner: {{group.owner.name}}</p>
+        </div>
+      </ng-template>
+    </app-cardlist>
+  </div>
+</app-sidenav>

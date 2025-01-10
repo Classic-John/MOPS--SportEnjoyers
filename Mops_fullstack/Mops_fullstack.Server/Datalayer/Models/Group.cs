@@ -11,11 +11,18 @@ namespace Mops_fullstack.Server.Datalayer.Models;
 public partial class Group : BaseEntity, IGroup
 {
     [Required]
-    public int? GroupCreator { get; set; }
+    public string Name { get; set; } = null!;
 
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    [Required]
+    public int OwnerId { get; set; }
 
-    public virtual ICollection<Thread> Threads { get; set; } = new List<Thread>();
+    public Player Owner { get; set; } = null!;
 
-    public virtual ICollection<Player> Players { get; set; } = new List<Player>();
+    public ICollection<Match> Matches { get; set; } = [];
+
+    public ICollection<Thread> Threads { get; set; } = [];
+
+    public ICollection<Player> Players { get; set; } = new List<Player>();
+
+    public ICollection<Player> PlayerRequests { get; set; } = [];
 }

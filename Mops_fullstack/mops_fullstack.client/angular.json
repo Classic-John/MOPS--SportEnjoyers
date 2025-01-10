@@ -78,7 +78,10 @@
           "defaultConfiguration": "development",
           "options": {
             "proxyConfig": "src/proxy.conf.js",
-            "port": 63635
+            "port": 63635,
+            "headers": {
+              "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+            }
           }
         },
         "extract-i18n": {

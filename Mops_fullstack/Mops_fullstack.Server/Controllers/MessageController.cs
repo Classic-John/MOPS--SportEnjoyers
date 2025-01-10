@@ -16,7 +16,7 @@ namespace Mops_fullstack.Server.Controllers
         public MessageController(MessageService messageService)
             => _messageService = messageService;
 
-        [HttpGet("GetMessages")]
+        /*[HttpGet("GetMessages")]
         public IEnumerable<MessageDTO> GetMessages()
             => _messageService.GetItems().Select(message => MapperConvert<Message, MessageDTO>.ConvertItem(message)).ToList();
 
@@ -42,6 +42,6 @@ namespace Mops_fullstack.Server.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteMessage(int? id)
-            => _messageService.RemoveItem(_messageService.GetItem(id)) ? Ok() : NotFound();
+            => _messageService.RemoveItem(_messageService.GetItem(id)) ? Ok() : NotFound();*/
     }
 }

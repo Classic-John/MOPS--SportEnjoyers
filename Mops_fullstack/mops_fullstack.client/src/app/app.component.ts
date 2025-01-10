@@ -10,28 +10,9 @@ interface WeatherForecast {
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit {
-  public forecasts: WeatherForecast[] = [];
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit() {
-    this.getForecasts();
-  }
-
-  getForecasts() {
-    this.http.get<WeatherForecast[]>('/weatherforecast').subscribe(
-      (result) => {
-        this.forecasts = result;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
+export class AppComponent {
 
   title = 'mops_fullstack.client';
 }

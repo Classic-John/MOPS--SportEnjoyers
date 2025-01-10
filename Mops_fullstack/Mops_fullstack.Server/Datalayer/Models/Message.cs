@@ -10,8 +10,16 @@ namespace Mops_fullstack.Server.Datalayer.Models;
 
 public partial class Message : BaseEntity, IMessage
 {
-    public string? Text { get; set; }
     [Required]
-    public int AssociatedThreadId { get; set; }
-    public virtual Thread AssociatedThread { get; set; } = null!;
+    public string Text { get; set; } = null!;
+
+    [Required]
+    public int ThreadId { get; set; }
+
+    public Thread Thread { get; set; } = null!;
+
+    [Required]
+    public int PlayerId { get; set; }
+
+    public Player Player { get; set; } = null!;
 }

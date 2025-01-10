@@ -3,7 +3,7 @@ using Mops_fullstack.Server.Datalayer.Service_interfaces;
 
 namespace Mops_fullstack.Server.Core.Services
 {
-    public class OwnerService : IOwnerService
+    /*public class OwnerService : IOwnerService
     {
         private readonly UnitOfWork _unitOfWork;
         public OwnerService(UnitOfWork unitOfWork)
@@ -22,5 +22,5 @@ namespace Mops_fullstack.Server.Core.Services
 
         public bool UpdateItem(Owner entity)
             => _unitOfWork.OwnerRepo.Update(entity);
-    }
+    }*/
 }

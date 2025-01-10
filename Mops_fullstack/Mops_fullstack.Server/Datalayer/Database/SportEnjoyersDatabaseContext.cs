@@ -26,7 +26,7 @@ public partial class SportEnjoyersDatabaseContext : DbContext
 
     public virtual DbSet<Message> Messages { get; set; }
 
-    public virtual DbSet<Owner> Owners { get; set; }
+    // public virtual DbSet<Owner> Owners { get; set; }
 
     public virtual DbSet<Player> Players { get; set; }
 
@@ -34,13 +34,22 @@ public partial class SportEnjoyersDatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Field>(entity =>
+        /*modelBuilder.Entity<Field>(entity =>
         {
             entity.ToTable("Field");
 
             entity.HasIndex(e => e.AreaOwnerId, "IX_Field_AreaOwnerId");
 
             entity.HasOne(d => d.AreaOwner).WithMany(p => p.Fields).HasForeignKey(d => d.AreaOwnerId);
+        });*/
+
+        modelBuilder.Entity<Field>(entity =>
+        {
+            entity.ToTable("Field");
+
+            entity.HasIndex(e => e.OwnerId, "IX_Field_OwnerId");
+
+            entity.HasOne(d => d.Owner).WithMany(p => p.Fields).HasForeignKey(d => d.OwnerId);
         });
 
         modelBuilder.Entity<Group>(entity =>
@@ -48,44 +57,79 @@ public partial class SportEnjoyersDatabaseContext : DbContext
             entity.HasMany(d => d.Players).WithMany(p => p.Groups)
                 .UsingEntity<Dictionary<string, object>>(
                     "GroupPlayer",
-                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayersId"),
-                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupsId"),
+                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayersId").OnDelete(DeleteBehavior.Restrict),
+                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupsId").OnDelete(DeleteBehavior.Restrict),
                     j =>
                     {
                         j.HasKey("GroupsId", "PlayersId");
                         j.ToTable("GroupPlayer");
                         j.HasIndex(new[] { "PlayersId" }, "IX_GroupPlayer_PlayersId");
                     });
+
+            entity.HasMany(d => d.PlayerRequests).WithMany(p => p.GroupRequests)
+                .UsingEntity<Dictionary<string, object>>(
+                    "JoinRequests",
+                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayerId").OnDelete(DeleteBehavior.Restrict),
+                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupId").OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                    {
+                        j.HasKey("GroupId", "PlayerId");
+                        j.ToTable("JoinRequests");
+                        j.HasIndex(new[] { "PlayerId" }, "IX_JoinRequests_PlayerId");
+                    });
+        });
+
+        modelBuilder.Entity<Group>(entity =>
+        {
+            entity.HasIndex(e => e.OwnerId, "IX_Groups_OrganizerId");
+
+            entity.HasOne(d => d.Owner).WithMany(p => p.GroupsOwned).HasForeignKey(d => d.OwnerId);
         });
 
         modelBuilder.Entity<Match>(entity =>
         {
-            entity.HasIndex(e => e.AssociatedGroupId, "IX_Matches_AssociatedGroupId");
+            entity.HasIndex(e => e.GroupId, "IX_Matches_GroupId");
 
-            entity.HasOne(d => d.AssociatedGroup).WithMany(p => p.Matches).HasForeignKey(d => d.AssociatedGroupId);
+            entity.HasOne(d => d.Group).WithMany(p => p.Matches).HasForeignKey(d => d.GroupId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Match>(entity =>
+        {
+            entity.HasIndex(e => e.FieldId, "IX_Matches_FieldId");
+
+            entity.HasOne(d => d.Field).WithMany(p => p.Matches).HasForeignKey(d => d.FieldId);
         });
 
         modelBuilder.Entity<Message>(entity =>
         {
             entity.ToTable("Message");
 
-            entity.HasIndex(e => e.AssociatedThreadId, "IX_Message_AssociatedThreadId");
+            entity.HasIndex(e => e.ThreadId, "IX_Message_ThreadId");
 
-            entity.HasOne(d => d.AssociatedThread).WithMany(p => p.Messages).HasForeignKey(d => d.AssociatedThreadId);
+            entity.HasOne(d => d.Thread).WithMany(p => p.Messages).HasForeignKey(d => d.ThreadId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<Player>(entity =>
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.ToTable("Message");
+
+            entity.HasIndex(e => e.PlayerId, "IX_Message_PlayerId");
+
+            entity.HasOne(d => d.Player).WithMany(p => p.Messages).HasForeignKey(d => d.PlayerId);
+        });
+
+        /*modelBuilder.Entity<Player>(entity =>
         {
             entity.HasIndex(e => e.AreaOwnerId, "IX_Players_AreaOwnerId");
 
             entity.HasOne(d => d.AreaOwner).WithMany(p => p.Players).HasForeignKey(d => d.AreaOwnerId);
-        });
+        });*/
 
         modelBuilder.Entity<Thread>(entity =>
         {
-            entity.HasIndex(e => e.AssociatedGroupId, "IX_Threads_AssociatedGroupId");
+            entity.HasIndex(e => e.GroupId, "IX_Threads_GroupId");
 
-            entity.HasOne(d => d.AssociatedGroup).WithMany(p => p.Threads).HasForeignKey(d => d.AssociatedGroupId);
+            entity.HasOne(d => d.Group).WithMany(p => p.Threads).HasForeignKey(d => d.GroupId);
         });
 
         OnModelCreatingPartial(modelBuilder);
