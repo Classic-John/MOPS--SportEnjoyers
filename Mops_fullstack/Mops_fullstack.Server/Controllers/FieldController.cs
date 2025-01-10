@@ -5,6 +5,7 @@ using Mops_fullstack.Server.Core.Services;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
 using Mops_fullstack.Server.Datalayer.Models;
+using Mops_fullstack.Server.Datalayer.Service_interfaces;
 
 namespace Mops_fullstack.Server.Controllers
 {
@@ -13,8 +14,8 @@ namespace Mops_fullstack.Server.Controllers
     [RequireHttps]
     public class FieldController : ControllerBase
     {
-        private readonly FieldService _fieldService;
-        public FieldController(FieldService fieldService)
+        private readonly IFieldService _fieldService;
+        public FieldController(IFieldService fieldService)
             => _fieldService = fieldService;
 
         [HttpGet("GetFields")]

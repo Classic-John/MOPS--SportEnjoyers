@@ -12,8 +12,8 @@ namespace Mops_fullstack.Server.Controllers
     [ApiController]
     public class GroupController : ControllerBase
     {
-        private readonly GroupService _groupService;
-        public GroupController(GroupService groupService)
+        private readonly IGroupService _groupService;
+        public GroupController(IGroupService groupService)
             => _groupService = groupService;
 
         [HttpGet("GetGroups")]

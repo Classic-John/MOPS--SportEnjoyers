@@ -12,8 +12,8 @@ namespace Mops_fullstack.Server.Controllers
     [ApiController]
     public class OwnerController : ControllerBase
     {
-        private readonly OwnerService _ownerService;
-        public OwnerController(OwnerService ownerService)
+        private readonly IOwnerService _ownerService;
+        public OwnerController(IOwnerService ownerService)
         => _ownerService = ownerService;
 
         [HttpGet("GetOwners")]

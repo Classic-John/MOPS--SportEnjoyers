@@ -13,8 +13,8 @@ namespace Mops_fullstack.Server.Controllers
     [ApiController]
     public class ThreadController : ControllerBase
     {
-        private readonly ThreadService _threadService;
-        public ThreadController(ThreadService threadService)
+        private readonly IThreadService _threadService;
+        public ThreadController(IThreadService threadService)
             => _threadService = threadService;
         [HttpGet("GetThreads")]
         public IEnumerable<ThreadDTO> GetThreads()

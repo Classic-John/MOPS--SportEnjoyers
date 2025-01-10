@@ -12,8 +12,8 @@ namespace Mops_fullstack.Server.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private readonly MessageService _messageService;
-        public MessageController(MessageService messageService)
+        private readonly IMessageService _messageService;
+        public MessageController(IMessageService messageService)
             => _messageService = messageService;
 
         [HttpGet("GetMessages")]

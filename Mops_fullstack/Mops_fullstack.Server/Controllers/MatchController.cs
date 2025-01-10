@@ -12,8 +12,8 @@ namespace Mops_fullstack.Server.Controllers
     [ApiController]
     public class MatchController : ControllerBase
     {
-        private readonly MatchService _matchService;
-        public MatchController(MatchService matchService)
+        private readonly IMatchService _matchService;
+        public MatchController(IMatchService matchService)
            => _matchService = matchService;
 
         [HttpGet("GetMatches")]
