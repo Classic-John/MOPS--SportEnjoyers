@@ -30,7 +30,7 @@ namespace Mops_fullstack.Server.Controllers
         }
 
         [HttpPut("UpdateOwner")]
-        public IActionResult UpdateMessage(OwnerDTO owner)
+        public IActionResult UpdateOwner(OwnerDTO owner)
            => _ownerService.UpdateItem(MapperConvert<OwnerDTO, Owner>.ConvertItem(owner)) ? Ok() : NotFound();
 
         [HttpPost("AddOwner")]

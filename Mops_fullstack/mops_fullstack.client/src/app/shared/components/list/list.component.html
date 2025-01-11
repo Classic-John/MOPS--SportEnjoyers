@@ -1,0 +1,12 @@
+<div class="app-list-container">
+  <div *ngFor="let item of itemList.slice(pageRangeStart, pageRangeEnd)" class="app-list-item">
+    <ng-template [ngTemplateOutlet]="templateRef" [ngTemplateOutletContext]="{$implicit: item}"></ng-template>
+  </div>
+</div>
+<mat-paginator #paginator
+               (page)="handlePageEvent($event)"
+               [length]="itemList.length"
+               [pageSize]="pageSize"
+               [pageIndex]="pageIndex"
+               *ngIf="showPaginator">
+</mat-paginator>

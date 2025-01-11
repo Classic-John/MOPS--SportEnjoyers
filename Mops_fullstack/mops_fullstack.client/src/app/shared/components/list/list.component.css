@@ -1,0 +1,19 @@
+.app-list-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding-left: 30%;
+  padding-right: 30%;
+}
+
+.app-list-item {
+  border: 2px solid darkgray;
+  border-radius: 15px;
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+:host {
+  height: 100%;
+}

@@ -1,1 +1,121 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('../public/fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --background-color: #673ab7;
+}
+
+.container {
+  margin: 8px;
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+  font-family: Roboto;
+}
+
+body {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+app-root {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+app-navbar {
+  position: sticky;
+  overflow: hidden;
+  top: 0;
+  z-index: 2;
+  width: 100%;
+}
+
+  app-navbar mat-toolbar .nav_item {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  app-navbar mat-toolbar * {
+    width: 100%;
+    text-align: center;
+  }
+
+.form_card {
+  min-width: 500px;
+  min-height: 300px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+app-root *:nth-child(4) {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card-content {
+  flex-grow: 1;
+  display: flex;
+}
+
+.form-submit-button {
+  background-color: var(--background-color) !important;
+  color: white !important;
+}
+
+/*
+  Group operations:
+    - create group (create group button under Groups in navbar) POST /api/group /groups/create DONE
+    - search groups with filters (Groups button in navbar) GET /api/group /groups DONE
+    - see my own groups (my groups button under Groups in navbar) GET /api/group /groups DONE
+    - view group GET /api/groups/{id} /group/{id} DONE
+    - see join requests (join requests under Groups in navbar) GET /api/group/requests /groups/requests
+    - request to join group POST /api/group/requests /groups/{id}
+    - send verdict for request PUT /api/group/requests /groups/requests DONE?
+    - kick player out of group you own DELETE /api/group/requests /groups/{id} 
+    - delete groups you created DELETE /api/group/{id} /groups/{id}
+    - change groups you created PUT /api/group/{id} /groups/{id}
+
+  Group filters:
+    - Location
+    - You are member of
+
+  Field operations:
+    - create field
+    - search fields with filter
+    - make reservation(not possible yet)
+    - delte field(if you own it)
+    - cancel reservation(if you made it)
+
+  Field filter options:
+    - owner by username(special owned by you option) - text
+    - reserver by username(special reserved by you option) - text
+    - only not reserved - checkbox
+    - sports - checkbox group
+    - time period - datepicker
+    - 
+*/

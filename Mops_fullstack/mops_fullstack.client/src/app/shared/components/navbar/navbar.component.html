@@ -1,0 +1,33 @@
+<mat-toolbar color="primary">
+  <a class="nav_item" mat-button routerLink="''">Home</a>
+  <a class="nav_item" mat-button routerLink="fields">Fields</a>
+  <app-automenu class="nav_item" *ngIf="isLoggedIn(); else groupsLoggedOut">
+    <button mat-button trigger routerLink="groups">Groups</button>
+    <div content>
+      <a mat-menu-item routerLink="groups/create">
+        <span>Create</span>
+      </a>
+      <a mat-menu-item routerLink="groups" [queryParams]="{yours: 'true'}">
+        <span>Your groups</span>
+      </a>
+    </div>
+  </app-automenu>
+  <ng-template #groupsLoggedOut>
+    <a class="nav_item" mat-button routerLink="groups">Groups</a>
+  </ng-template>
+  <a class="nav_item" mat-button routerLink="threads">Forum threads</a>
+  <app-automenu class="nav_item">
+    <button mat-button trigger>Authenticate</button>
+    <div content>
+      <a *ngIf="!isLoggedIn()" mat-menu-item routerLink="login">
+        <span>Login</span>
+      </a>
+      <a *ngIf="!isLoggedIn()" mat-menu-item routerLink="register">
+        <span>Register</span>
+      </a>
+      <button *ngIf="isLoggedIn()" mat-menu-item (click)="logout()">
+        <span>Logout</span>
+      </button>
+    </div>
+  </app-automenu>
+</mat-toolbar>

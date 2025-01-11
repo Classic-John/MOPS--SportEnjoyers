@@ -1,0 +1,41 @@
+<app-centered>
+  <mat-card class="form_card" content>
+    <mat-card-header>
+      <mat-card-title>Register a new account</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form id="registerForm" [formGroup]="registerForm" (ngSubmit)="register(registerForm.getRawValue())">
+        <div class="form_field">
+          <mat-form-field>
+            <mat-label>Enter your e-mail</mat-label>
+            <input matInput placeholder="john@sports.com" formControlName="email" />
+          </mat-form-field>
+        </div>
+        <div class="form_field">
+          <mat-form-field>
+            <mat-label>Enter your name</mat-label>
+            <input matInput maxlength="15" placeholder="John sports" formControlName="name" />
+          </mat-form-field>
+        </div>
+        <div class="form_field">
+          <mat-form-field>
+            <mat-label>Enter your password</mat-label>
+            <input matInput maxlength="15" formControlName="password" [type]="passwordHidden() ? 'password' : 'text'" />
+            <button type="button" mat-icon-button matSuffix (click)="toggleHidden($event)" [attr.aria-pressed]="passwordHidden()">
+              <mat-icon>{{passwordHidden() ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div class="form_field">
+          <mat-form-field>
+            <mat-label>Select your age:</mat-label>
+            <input matInput type="number" min="16" placeholder="16" />
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button class="form-submit-button" type="submit" form="registerForm" [disabled]="!registerForm.valid">Create account</button>
+    </mat-card-actions>
+  </mat-card>
+</app-centered>
