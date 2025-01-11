@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.Identity.Client;
 using Mops_fullstack.Server.Datalayer.BaseClass;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
 using Mops_fullstack.Server.Datalayer.Models;
@@ -60,6 +61,8 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
 
     public class PlayerDTO
     {
+        public int Id { get; set; }
+
         public string Email { get; set; } = null!;
 
         public string Name { get; set; } = null!;
@@ -67,8 +70,23 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
         public int Age { get; set; }
     }
 
+    public class JoinRequestDTO
+    {
+        public PlayerDTO Player { get; set; }
+        
+        public GroupDTO Group { get; set; }
+
+        public JoinRequestDTO(PlayerDTO player, GroupDTO group)
+        {
+            Player = player;
+            Group = group;
+        }
+    }
+
     public class JoinRequestVerdict
     {
+        public int PlayerId { get; set; }
+
         public bool Accepted { get; set; }
     }
 }

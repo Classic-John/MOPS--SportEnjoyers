@@ -25,7 +25,7 @@ namespace Mops_fullstack.Server.Datalayer.IMapperConverter
             CreateMap<PlayerRegisterDTO, Player>(MemberList.Source);
             CreateMap<PlayerLoginDTO, Player>(MemberList.Source);
 
-            CreateMap<Group, GroupDTO>(MemberList.Destination);
+            CreateMap<Group, GroupDTO>();
             CreateMap<Group, GroupSearchDTO>(MemberList.Destination);
             CreateMap<CreateGroupDTO, Group>(MemberList.Source);
         }

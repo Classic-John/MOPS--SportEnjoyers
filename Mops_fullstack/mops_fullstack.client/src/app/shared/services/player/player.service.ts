@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Player } from '../../interfaces/players/player.interface';
 import { Observable } from 'rxjs';
+import { JoinRequest } from '../../interfaces/requests/join-request.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,7 @@ export class PlayerService {
     return this.apiService.get<Player>(`${this.route}`);
   }
 
-  isMemberOf(groupId: Number): Observable<any> {
-    return this.apiService.get(`${this.route}group/${groupId}/join`);
-  }
-
-  joinGroup(groupId: Number): Observable<any> {
-    return this.apiService.post(`${this.route}group/${groupId}/join`);
-  }
-
-  resolveJoin(groupId: Number, playerId: Number): Observable<any> {
-    return this.apiService.put(`${this.route}group/${groupId}/join/${playerId}`);
+  getRequests(): Observable<any> {
+    return this.apiService.get<JoinRequest>(`${this.route}requests`);
   }
 }

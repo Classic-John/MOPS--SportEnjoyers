@@ -1,1 +1,13 @@
-<p>requests works!</p>
+<h2 class="page-title">Join requests received</h2>
+<app-list [itemList]="requestList" [showPaginator]="requestList.length > 10">
+  <ng-template let-request>
+    <div>
+      <p>Group: {{request.group.name}}</p>
+      <p>Player: {{request.player.name}}, age {{request.player.age}}</p>
+      <div>
+        <button mat-button (click)="sendVerdict(request.group.id, request.player.id, true)"><mat-icon fontIcon="check" style="color: forestgreen"></mat-icon>Accept</button>
+        <button mat-button (click)="sendVerdict(request.group.id, request.player.id, false)"><mat-icon fontIcon="close" style="color: red"></mat-icon>Reject</button>
+      </div>
+    </div>
+  </ng-template>
+</app-list>

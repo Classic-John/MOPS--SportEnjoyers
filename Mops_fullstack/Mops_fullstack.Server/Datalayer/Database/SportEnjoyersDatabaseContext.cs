@@ -57,8 +57,8 @@ public partial class SportEnjoyersDatabaseContext : DbContext
             entity.HasMany(d => d.Players).WithMany(p => p.Groups)
                 .UsingEntity<Dictionary<string, object>>(
                     "GroupPlayer",
-                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayersId").OnDelete(DeleteBehavior.Restrict),
-                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupsId").OnDelete(DeleteBehavior.Restrict),
+                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayersId").OnDelete(DeleteBehavior.NoAction),
+                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupsId").OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {
                         j.HasKey("GroupsId", "PlayersId");
@@ -69,8 +69,8 @@ public partial class SportEnjoyersDatabaseContext : DbContext
             entity.HasMany(d => d.PlayerRequests).WithMany(p => p.GroupRequests)
                 .UsingEntity<Dictionary<string, object>>(
                     "JoinRequests",
-                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayerId").OnDelete(DeleteBehavior.Restrict),
-                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupId").OnDelete(DeleteBehavior.Restrict),
+                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayerId").OnDelete(DeleteBehavior.NoAction),
+                    l => l.HasOne<Group>().WithMany().HasForeignKey("GroupId").OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {
                         j.HasKey("GroupId", "PlayerId");
@@ -83,14 +83,14 @@ public partial class SportEnjoyersDatabaseContext : DbContext
         {
             entity.HasIndex(e => e.OwnerId, "IX_Groups_OrganizerId");
 
-            entity.HasOne(d => d.Owner).WithMany(p => p.GroupsOwned).HasForeignKey(d => d.OwnerId);
+            entity.HasOne(d => d.Owner).WithMany(p => p.GroupsOwned).HasForeignKey(d => d.OwnerId).OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<Match>(entity =>
         {
             entity.HasIndex(e => e.GroupId, "IX_Matches_GroupId");
 
-            entity.HasOne(d => d.Group).WithMany(p => p.Matches).HasForeignKey(d => d.GroupId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(d => d.Group).WithMany(p => p.Matches).HasForeignKey(d => d.GroupId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Match>(entity =>
@@ -106,7 +106,7 @@ public partial class SportEnjoyersDatabaseContext : DbContext
 
             entity.HasIndex(e => e.ThreadId, "IX_Message_ThreadId");
 
-            entity.HasOne(d => d.Thread).WithMany(p => p.Messages).HasForeignKey(d => d.ThreadId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(d => d.Thread).WithMany(p => p.Messages).HasForeignKey(d => d.ThreadId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Message>(entity =>

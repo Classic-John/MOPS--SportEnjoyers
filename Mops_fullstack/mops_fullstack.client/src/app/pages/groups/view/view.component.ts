@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { Group } from '../../../shared/interfaces/groups/group.interface';
 import { GroupService } from '../../../shared/services/group/group.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { GroupJoinStatus, GroupJoinStatusType } from '../../../shared/interfaces/requests/join-status.interface';
 import { AuthorizationService } from '../../../shared/services/auth/authorization.service';
-import { PlayerService } from '../../../shared/services/player/player.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-view',
@@ -14,14 +13,25 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ViewComponent {
   group: Group | null = null;
   groupId: Number | null = null;
-  isPartOf: Boolean = false;
-  pendingJoinRequest: Boolean = true;
+  joinStatus: GroupJoinStatusType = GroupJoinStatusType.NoRequest;
+  isLoggedIn = AuthorizationService.isLoggedIn;
 
-  constructor(route: ActivatedRoute, private readonly groupService: GroupService, private readonly playerService: PlayerService) {
+  isPartOf(): Boolean {
+    return this.joinStatus == GroupJoinStatusType.Joined;
+  }
+
+  isPendingJoin(): Boolean {
+    return this.joinStatus == GroupJoinStatusType.Pending;
+  }
+
+  isOwner(): Boolean {
+    return this.group?.isYours ?? false;
+  }
+
+  constructor(route: ActivatedRoute, private readonly groupService: GroupService, private readonly router: Router) {
     route.paramMap.subscribe({
       next: (params) => {
         let id: Number = Number(params.get('id'));
-
 
         this.groupService.get(id).subscribe({
           next: (group) => {
@@ -30,24 +40,16 @@ export class ViewComponent {
           },
           error: (err) => {
             console.log("Error: ", err);
+            router.navigate(["/groups"]);
           }
         });
 
-        this.playerService.isMemberOf(id).subscribe({
-          next: () => {
-            this.isPartOf = true;
-            this.pendingJoinRequest = false;
+        this.groupService.getJoinStatus(id).subscribe({
+          next: (join: GroupJoinStatus) => {
+            this.joinStatus = join.status;
           },
-          error: (err: HttpErrorResponse) => {
-            if (err.status === 404) {
-              this.isPartOf = false;
-              this.pendingJoinRequest = false;
-            } else if (err.status === 403) {
-              this.isPartOf = false;
-              this.pendingJoinRequest = true;
-            } else{ 
-              console.log("Error: ", err);
-            }
+          error: (err) => {
+            console.log("Error: ", err);
           }
         });
       }
@@ -55,10 +57,47 @@ export class ViewComponent {
   }
 
   sendJoinRequest() {
-    this.playerService.joinGroup(this.groupId!).subscribe({
+    this.groupService.sendJoinRequest(this.groupId!).subscribe({
       next: () => {
         console.log("Send join request successfully!");
-        this.pendingJoinRequest = true;
+        this.joinStatus = GroupJoinStatusType.Pending;
+      },
+      error: (err) => {
+        console.log("Error: ", err);
+      }
+    });
+  }
+
+  leaveGroup() {
+    this.groupService.leaveGroup(this.groupId!).subscribe({
+      next: () => {
+        this.joinStatus = GroupJoinStatusType.NoRequest;
+        window.location.reload();
+        console.log("Left group successfully!");
+      },
+      error: (err) => {
+        console.log("Error: ", err);
+      }
+    })
+  }
+
+  kickPlayer(playerId: Number) {
+    this.groupService.kickFromGroup(this.groupId!, playerId).subscribe({
+      next: () => {
+        window.location.reload();
+        console.log("Kicked player from group successfully!");
+      },
+      error: (err) => {
+        console.log("Error: ", err);
+      }
+    });
+  }
+
+  deleteGroup() {
+    this.groupService.deleteGroup(this.groupId!).subscribe({
+      next: () => {
+        console.log("Deleted group successfully!");
+        this.router.navigate(["/groups"]);
       },
       error: (err) => {
         console.log("Error: ", err);

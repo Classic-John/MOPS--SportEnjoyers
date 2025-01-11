@@ -8,7 +8,7 @@ namespace Mops_fullstack.Server.Core.Services
         private readonly UnitOfWork _unitOfWork;
         public MatchService(UnitOfWork unitOfWork)
             => _unitOfWork = unitOfWork;
-        public bool AddItem(Match entity)
+        public Match? AddItem(Match entity)
             => _unitOfWork.MatchRepo.Add(entity);
 
         public Match GetItem(int? id)

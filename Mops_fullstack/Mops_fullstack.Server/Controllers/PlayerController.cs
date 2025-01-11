@@ -47,8 +47,8 @@ namespace Mops_fullstack.Server.Controllers
         {
             player.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(player.Password);
             return
-                _playerService.AddItem(_mapper.Map<Player>(player))
-                    ? Ok()
+                _playerService.AddItem(_mapper.Map<Player>(player)) != null
+                    ? Created()
                     : BadRequest("Failed to add player to database.");
         }
 
@@ -71,72 +71,29 @@ namespace Mops_fullstack.Server.Controllers
             return Ok(new LoggedPlayerDTO(Player, token));
         }
 
-        [HttpGet("Group/{groupId}/Join")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpGet("requests")]
+        [ProducesResponseType(typeof(ICollection<JoinRequestDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult CheckIsMember([FromRoute]int groupId)
-        {
-            if (HttpContext.Items["Player"] is not Player player)
-            {
-                return Unauthorized("Cannot check if the user is a member of the group because no user is logged in.");
-            }
-
-            if (_playerService.IsMemberOf(player.Id, groupId))
-            {
-                return NoContent();
-            }
-
-            if (_playerService.IsPendingRequest(player.Id, groupId))
-            {
-                return Forbid();
-            }
-
-            return NotFound("The player is not part of that group.");
-        }
-
-        [HttpPost("Group/{groupId}/Join")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult SendJoinRequest([FromRoute]int groupId)
+        public IActionResult GetJoinRequests()
         {
             if (HttpContext.Items["Player"] is not Player player)
             {
                 return Unauthorized("Cannot send a group join request because no user is logged in.");
             }
 
-            if (!_playerService.SendJoinRequest(player.Id, groupId))
+            ICollection<JoinRequestDTO> joinRequests = [];
+            player = _playerService.GetWithJoinRequests(player.Id);
+            foreach (Group group in player.GroupsOwned)
             {
-                return NotFound("Unable to send a group join request.");
+                GroupDTO groupDTO = _mapper.Map<GroupDTO>(group);
+
+                foreach (Player gplayer in group.PlayerRequests)
+                {
+                    joinRequests.Add(new JoinRequestDTO(_mapper.Map<PlayerDTO>(gplayer), groupDTO));
+                }
             }
 
-            return NoContent();
-        }
-
-        [HttpPut("Group/{groupId}/Join/{playerId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ResolveJoinRequest([FromRoute]int groupId, [FromRoute]int playerId, [FromBody]JoinRequestVerdict verdict)
-        {
-            if (HttpContext.Items["Player"] is not Player player)
-            {
-                return Unauthorized("Cannot set a group join verdict because no user is logged in.");
-            }
-
-            if (!_playerService.IsOwnerOf(player.Id, groupId))
-            {
-                return Unauthorized("Cannot resolve a join request for a group you do not own.");
-            }
-
-            if (!_playerService.ResolveJoinRequest(playerId, groupId, verdict))
-            {
-                return BadRequest("Cannot resolve the join request; input data is not correct.");
-            }
-
-            return NoContent();
+            return Ok(joinRequests);
         }
 
         /*[HttpPut("UpdatePlayer")]

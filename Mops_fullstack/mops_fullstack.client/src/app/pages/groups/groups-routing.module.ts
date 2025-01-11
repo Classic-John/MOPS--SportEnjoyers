@@ -5,6 +5,7 @@ import { RequestsComponent } from './requests/requests.component';
 import { CreateComponent } from './create/create.component';
 import { ViewComponent } from './view/view.component';
 import { intParamGuard } from '../../shared/guards/intParam/int-param.guard';
+import { loggedGuard } from '../../shared/guards/logged/logged.guard';
 
 const routes: Routes = [
   {
@@ -13,11 +14,13 @@ const routes: Routes = [
   },
   {
     path: 'requests',
-    component: RequestsComponent
+    component: RequestsComponent,
+    canActivate: [loggedGuard]
   },
   {
     path: 'create',
-    component: CreateComponent
+    component: CreateComponent,
+    canActivate: [loggedGuard]
   },
   {
     path: ':id',

@@ -8,7 +8,7 @@ namespace Mops_fullstack.Server.Core.Services
         public ThreadService(UnitOfWork unitOfWork)
             => _unitOfWork = unitOfWork;
 
-        public bool AddItem(Datalayer.Models.Thread entity)
+        public Datalayer.Models.Thread? AddItem(Datalayer.Models.Thread entity)
             => _unitOfWork.ThreadRepo.Add(entity);
 
         public Datalayer.Models.Thread GetItem(int? id)

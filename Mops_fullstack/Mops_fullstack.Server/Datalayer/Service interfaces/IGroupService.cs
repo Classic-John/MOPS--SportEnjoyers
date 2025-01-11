@@ -9,5 +9,17 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
         public IEnumerable<Group> GetItemsThatMatch(GroupFilterDTO filter);
 
         public Group? GetGroupData(int id);
+
+        public bool AddJoinRequest(int groupId, Player player);
+
+        public bool AddJoinVerdict(int groupId, int ownerId, JoinRequestVerdict verdict);
+
+        public GroupJoinStatus? GetJoinStatus(int groupId, int playerId);
+
+        public bool RemoveFromGroup(int groupId, int playerId);
+
+        public bool IsOwnedBy(int groupId, int playerId);
+
+        public bool DeleteGroup(int groupId);
     }
 }

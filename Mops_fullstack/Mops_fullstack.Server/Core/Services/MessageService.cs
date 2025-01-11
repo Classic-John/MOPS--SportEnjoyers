@@ -8,7 +8,7 @@ namespace Mops_fullstack.Server.Core.Services
         private readonly UnitOfWork _unitOfWork;
         public MessageService(UnitOfWork unitOfWork)
            => _unitOfWork = unitOfWork;
-        public bool AddItem(Message entity)
+        public Message? AddItem(Message entity)
             => _unitOfWork.MessageRepo.Add(entity);
 
         public Message GetItem(int? id)

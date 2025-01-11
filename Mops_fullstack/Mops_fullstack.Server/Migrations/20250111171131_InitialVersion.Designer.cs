@@ -12,7 +12,7 @@ using Mops_fullstack.Server.Datalayer.Database;
 namespace Mops_fullstack.Server.Migrations
 {
     [DbContext(typeof(SportEnjoyersDatabaseContext))]
-    [Migration("20250106210023_InitialVersion")]
+    [Migration("20250111171131_InitialVersion")]
     partial class InitialVersion
     {
         /// <inheritdoc />
@@ -203,13 +203,13 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupsId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayersId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -218,13 +218,13 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -244,7 +244,7 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Player", "Owner")
                         .WithMany("GroupsOwned")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Owner");
@@ -261,7 +261,7 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Group", "Group")
                         .WithMany("Matches")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Field");
@@ -280,7 +280,7 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Thread", "Thread")
                         .WithMany("Messages")
                         .HasForeignKey("ThreadId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Player");

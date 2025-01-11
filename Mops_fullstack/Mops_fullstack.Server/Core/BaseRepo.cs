@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Mops_fullstack.Server.Datalayer.BaseClass;
 using Mops_fullstack.Server.Datalayer.Database;
 
@@ -15,16 +16,16 @@ namespace Mops_fullstack.Server.Core
             _repoTable = context.Set<T>();
             _repoItems = _repoTable.Select(item => item).ToListAsync().Result;
         }
-        public bool Add(T repoItem)
+        public T? Add(T repoItem)
         {
             try
             {
-                _repoTable.Add(repoItem);
+                EntityEntry<T> new_entity = _repoTable.Add(repoItem);
                 _repoItems.Add(repoItem);
-                return _repoTable.GetDbContext().SaveChangesAsync().Result > -1;
+                return (_repoTable.GetDbContext().SaveChangesAsync().Result > -1 ? new_entity.Entity : null);
             }
             catch (Exception ex) { Console.WriteLine(ex.Message); }
-            return false;
+            return null;
         }
         public List<T> GetAllItems()
             => _repoItems;

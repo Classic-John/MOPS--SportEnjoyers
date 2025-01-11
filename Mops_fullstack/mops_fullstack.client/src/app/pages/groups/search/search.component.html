@@ -19,8 +19,8 @@
     </form>
   </div>
   <div content>
-    <h2>Group list</h2>
-    <app-cardlist [itemList]="groupList" linkPath="id">
+    <h2 class="page-title">Group list</h2>
+    <app-cardlist [itemList]="groupList" [showPaginator]="groupList.length > 10" linkPath="id">
       <ng-template let-group>
         <div>
           <p>Group name: {{group.name}}</p>

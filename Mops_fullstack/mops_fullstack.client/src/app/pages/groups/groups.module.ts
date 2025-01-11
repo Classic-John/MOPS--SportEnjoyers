@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { SharedComponentsModule } from '../../shared/components/shared-components.module';
 
 
@@ -33,6 +34,7 @@ import { SharedComponentsModule } from '../../shared/components/shared-component
     MatButtonModule,
     MatCardModule,
     MatInputModule,
+    MatIconModule,
     SharedComponentsModule,
   ]
 })

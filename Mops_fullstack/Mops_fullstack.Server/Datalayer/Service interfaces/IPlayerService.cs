@@ -8,14 +8,6 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
     {
         public Player? GetPlayerWithEmail(string Email);
 
-        public bool IsMemberOf(int playerId, int groupId);
-
-        public bool IsPendingRequest(int playerId, int groupId);
-
-        public bool IsOwnerOf(int playerId, int groupId);
-
-        public bool SendJoinRequest(int playerId, int groupId);
-
-        public bool ResolveJoinRequest(int playerId, int groupId, JoinRequestVerdict verdict);
+        public Player GetWithJoinRequests(int id);
     }
 }

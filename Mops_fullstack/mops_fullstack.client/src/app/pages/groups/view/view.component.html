@@ -8,14 +8,17 @@
       <p>Players:</p>
       <ul>
         <li *ngFor="let player of group?.players">
-          <p>{{player.name}}, {{player.age}}</p>
+          <button mat-button *ngIf="isOwner(); else regular" (click)="kickPlayer(player.id)"><mat-icon fontIcon="person_remove"></mat-icon> {{player.name}}, {{player.age}}</button>
+          <ng-template #regular><p>{{player.name}}, {{player.age}}</p></ng-template>
         </li>
       </ul>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button *ngIf="!isPartOf" (click)="sendJoinRequest()" [disabled]="pendingJoinRequest">Join group</button>
-      <button mat-button *ngIf="isPartOf" routerLink="threads">See threads</button>
+      <button mat-button *ngIf="!isPartOf() && isLoggedIn()" (click)="sendJoinRequest()" [disabled]="isPendingJoin()">Join group</button>
+      <button mat-button *ngIf="isPartOf()" routerLink="threads">See threads</button>
       <button mat-button routerLink="matches">See matches</button>
+      <button mat-button *ngIf="isPartOf() && !isOwner()" (click)="leaveGroup()">Leave group</button>
+      <button mat-button *ngIf="isOwner()" (click)="deleteGroup()">Delete group</button>
     </mat-card-actions>
   </mat-card>
 </app-centered>

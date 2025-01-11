@@ -8,7 +8,7 @@ namespace Mops_fullstack.Server.Core.Services
         private readonly UnitOfWork _unitOfWork;
         public FieldService(UnitOfWork unitOfWork)
             => _unitOfWork = unitOfWork;
-        public bool AddItem(Field entity)
+        public Field? AddItem(Field entity)
             => _unitOfWork.FieldRepo.Add(entity);
 
         public Field GetItem(int? id)

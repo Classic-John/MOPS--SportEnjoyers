@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Mops_fullstack.Server.Datalayer.Database;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.Interfaces;
@@ -10,15 +11,19 @@ namespace Mops_fullstack.Server.Core.Services
     public class PlayerService : IPlayerService
     {
         private readonly UnitOfWork _unitOfWork;
-        public PlayerService(UnitOfWork unitOfWork)
-            => _unitOfWork = unitOfWork;
-        public bool AddItem(Player entity)
+        private readonly IMapper _mapper;
+        public PlayerService(UnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+        public Player? AddItem(Player entity)
             => _unitOfWork.PlayerRepo.Add(entity);
 
         public Player GetItem(int? id)
             => GetItems().FirstOrDefault(player => player.Id==id.Value);
 
-        public Player? GetPlayerWithEmail(String Email)
+        public Player? GetPlayerWithEmail(string Email)
             => GetItems().FirstOrDefault(player => player.Email == Email);
 
         public List<Player> GetItems()
@@ -30,63 +35,11 @@ namespace Mops_fullstack.Server.Core.Services
         public bool UpdateItem(Player entity)
             => _unitOfWork.PlayerRepo.Update(entity);
 
-        public bool IsMemberOf(int playerId, int groupId)
+        public Player GetWithJoinRequests(int id)
             => _unitOfWork.PlayerRepo.GetTable()
-                .Where(player => player.Id == playerId)
-                .Include(player => player.Groups.Where(group => group.Id == groupId))
-                .First().Groups.FirstOrDefault() != null;
-
-        public bool IsOwnerOf(int playerId, int groupId)
-            => _unitOfWork.GroupRepo.GetTable()
-                .Where(group => group.Id == groupId && group.OwnerId == playerId)
-                .FirstOrDefault() != null;
-
-        public bool IsPendingRequest(int playerId, int groupId)
-            => _unitOfWork.PlayerRepo.GetTable()
-                .Where(player => player.Id == playerId)
-                .Include(player => player.GroupRequests.Where(group => group.Id == groupId))
-                .First().GroupRequests.FirstOrDefault() != null;
-
-        public bool SendJoinRequest(int playerId, int groupId)
-        {
-            Player player = _unitOfWork.PlayerRepo.GetTable()
-                .Where(player => player.Id == playerId)
-                .Include(player => player.Groups)
-                .Include(player => player.GroupRequests)
+                .Where(player => player.Id == id)
+                .Include(player => player.GroupsOwned)
+                .ThenInclude(group => group.PlayerRequests)
                 .First();
-
-            if (
-                _unitOfWork.GroupRepo.GetTable().Where(group => group.Id == groupId).FirstOrDefault() is not Group group ||
-                player.Groups.Where(group => group.Id == groupId).FirstOrDefault() != null ||
-                player.GroupRequests.Where(group => group.Id == groupId).FirstOrDefault() != null
-            )
-            {
-                return false;
-            }
-
-            player.GroupRequests.Add(group);
-            return UpdateItem(player);
-        }
-
-        public bool ResolveJoinRequest(int playerId, int groupId, JoinRequestVerdict verdict)
-        {
-            Player player = _unitOfWork.PlayerRepo.GetTable()
-                .Where(player => player.Id == playerId)
-                .Include(player => player.Groups)
-                .Include(player => player.GroupRequests)
-                .First();
-
-            if (player.GroupRequests.Where(group => group.Id == groupId).FirstOrDefault() is not Group group)
-            {
-                return false;
-            }
-
-            player.GroupRequests.Remove(group);
-            if (verdict.Accepted)
-            {
-                player.Groups.Add(group);
-            }
-            return UpdateItem(player);
-        }
     }
 }

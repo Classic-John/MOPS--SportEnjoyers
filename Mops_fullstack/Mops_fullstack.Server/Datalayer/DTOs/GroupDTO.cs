@@ -17,9 +17,13 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
 
     public class GroupDTO
     {
+        public int Id { get; set; }
+
         public string Name { get; set; } = null!;
 
         public PlayerDTO Owner { get; set; } = null!;
+
+        public bool? IsYours { get; set; } = null;
 
         public virtual ICollection<PlayerDTO> Players { get; set; } = [];
     }
@@ -54,5 +58,17 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
 
         [SwaggerIgnore]
         public virtual ICollection<Player> Players { get; set; } = [];
+    }
+
+    public class GroupJoinStatus
+    {
+        public GroupJoinStatusTypes Status { get; set; }
+    }
+
+    public enum GroupJoinStatusTypes
+    {
+        NoRequest = 0,
+        Pending = 1,
+        Joined = 2,
     }
 }
