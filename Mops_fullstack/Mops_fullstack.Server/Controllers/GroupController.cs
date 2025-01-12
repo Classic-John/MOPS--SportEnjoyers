@@ -188,6 +188,19 @@ namespace Mops_fullstack.Server.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/matches")]
+        [ProducesResponseType(typeof(ICollection<MatchDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetMatches([FromRoute] int id)
+        {
+            ICollection<Match>? matches = _groupService.GetMatches(id);
+            if (matches == null)
+            {
+                return BadRequest("Could not retrieve matches because there is no group found with the given id.");
+            }
+            return Ok(matches.Select(_mapper.Map<MatchDTO>));
+        }
+
         /*[HttpPut("UpdateGroup")]
         public IActionResult UpdateGroup(GroupDTO group)
            => _groupService.UpdateItem(MapperConvert<GroupDTO, Group>.ConvertItem(group)) ? Ok() : NotFound();

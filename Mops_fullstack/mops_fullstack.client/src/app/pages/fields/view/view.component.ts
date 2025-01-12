@@ -2,14 +2,15 @@ import { Component } from '@angular/core';
 import { Field } from '../../../shared/interfaces/fields/field.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldService } from '../../../shared/services/field/field.service';
-import { GroupService } from '../../../shared/services/group/group.service';
 import { Group } from '../../../shared/interfaces/groups/group.interface';
 import { AuthorizationService } from '../../../shared/services/auth/authorization.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ValueInArray } from '../../../shared/validators/in-array-validator.validator';
-import { dateToString, stringToDate } from '../../../shared/utils/string-date-conversion.utils';
+import { dateToString } from '../../../shared/utils/string-date-conversion.utils';
 import { CreateMatch } from '../../../shared/interfaces/matches/create-match.interface';
 import { MatchService } from '../../../shared/services/match/match.service';
+import { PlayerService } from '../../../shared/services/player/player.service';
+import { Match } from '../../../shared/interfaces/matches/match.interface';
 
 @Component({
   selector: 'app-view',
@@ -28,7 +29,7 @@ export class ViewComponent {
   constructor(
     route: ActivatedRoute,
     private readonly fieldService: FieldService,
-    groupService: GroupService,
+    playerService: PlayerService,
     private readonly matchService: MatchService,
     private readonly router: Router,
     fb: FormBuilder,
@@ -41,27 +42,26 @@ export class ViewComponent {
         fieldService.get(id).subscribe({
           next: (field) => {
             this.field = field;
-            console.log(this.field);
             this.setReservedDates();
+          },
+          error: (err) => {
+            console.log("Error: ", err);
+          }
+        });
 
-            if (!this.isLoggedIn) {
-              this.reserveFieldForm = fb.group({});
-              return;
-            }
-            groupService.getAllThatMatch({ name: "", owner: "", yours: true }).subscribe({
-              next: (groups) => {
-                this.groupList = groups;
-                console.log(this.groupList);
+        if (!this.isLoggedIn) {
+          this.reserveFieldForm = fb.group({});
+          return;
+        }
 
-                this.reserveFieldForm = fb.group({
-                  fieldId: id,
-                  groupId: [0, Validators.compose([Validators.required, ValueInArray(this.groupList.map((group, _index, _array) => group.id))])],
-                  matchDate: ["", Validators.required]
-                });
-              },
-              error: (err) => {
-                console.log("Error: ", err);
-              }
+        playerService.getGroupsOwned().subscribe({
+          next: (groups) => {
+            this.groupList = groups;
+
+            this.reserveFieldForm = fb.group({
+              fieldId: id,
+              groupId: [0, Validators.compose([Validators.required, ValueInArray(this.groupList.map((group, _index, _array) => group.id))])],
+              matchDate: ["", Validators.required]
             });
           },
           error: (err) => {
@@ -75,9 +75,9 @@ export class ViewComponent {
   reserveField(match: CreateMatch) {
     match.matchDate = dateToString(new Date(match.matchDate as string));
     this.matchService.create(match).subscribe({
-      next: (match) => {
+      next: (match: Match) => {
         console.log("Successfully created reservation.");
-        this.router.navigate(["/groups/matches"]);
+        this.router.navigate([`/groups/${match.group.id}/matches`]);
       },
       error: (err) => {
         console.log("Error: ", err);

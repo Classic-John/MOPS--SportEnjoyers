@@ -15,4 +15,8 @@ export class MatchService {
   create(match: CreateMatch): Observable<any> {
     return this.apiService.post<Match>(`${this.route}`, match);
   }
+
+  delete(id: Number): Observable<any> {
+    return this.apiService.delete(`${this.route}${id}`);
+  }
 }

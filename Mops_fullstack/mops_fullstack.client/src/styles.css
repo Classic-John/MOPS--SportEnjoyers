@@ -90,32 +90,3 @@ mat-card-content {
 .page-title {
   text-align: center;
 }
-
-/*
-  Group operations:
-    - create group (create group button under Groups in navbar) POST /api/group /groups/create DONE
-    - search groups with filters (Groups button in navbar) GET /api/group /groups DONE
-    - see my own groups (my groups button under Groups in navbar) GET /api/group /groups DONE
-    - view group GET /api/groups/{id} /group/{id} DONE
-    - see join requests (join requests under Groups in navbar) GET /api/group/requests /groups/requests DONE
-    - request to join group POST /api/group/{id}/requests /groups/{id} DONE
-    - send verdict for request PUT /api/group/{id}/requests /groups/requests DONE
-    - kick player out of group you own DELETE /api/group/{id}/requests /groups/{id} DONE
-    - delete groups you created DELETE /api/group/{id} /groups/{id} DONE
-    - change groups you created PUT /api/group/{id} /groups/{id}
-
-  Group filters:
-    - name
-    - owner
-    - You are member of
-
-  Field operations:
-    - create field POST /api/field /fields/create
-    - search fields with filter GET /api/field /fields
-    - delete field(if you own it) DELETE /api/field /fields/{id}
-
-  Field filter options:
-    - owner by username(special owned by you option) - text
-    - only not reserved - toggle slider
-    - day - datepicker (optional with slider)
-*/

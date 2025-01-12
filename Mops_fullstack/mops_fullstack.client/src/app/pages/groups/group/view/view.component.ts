@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Group } from '../../../shared/interfaces/groups/group.interface';
-import { GroupService } from '../../../shared/services/group/group.service';
-import { GroupJoinStatus, GroupJoinStatusType } from '../../../shared/interfaces/requests/join-status.interface';
-import { AuthorizationService } from '../../../shared/services/auth/authorization.service';
+import { Group } from '../../../../shared/interfaces/groups/group.interface';
+import { GroupService } from '../../../../shared/services/group/group.service';
+import { GroupJoinStatus, GroupJoinStatusType } from '../../../../shared/interfaces/requests/join-status.interface';
+import { AuthorizationService } from '../../../../shared/services/auth/authorization.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FieldService } from '../../../shared/services/field/field.service';
-import { Field } from '../../../shared/interfaces/fields/field.interface';
+import { FieldService } from '../../../../shared/services/field/field.service';
+import { Field } from '../../../../shared/interfaces/fields/field.interface';
 
 @Component({
   selector: 'app-view',
@@ -47,7 +47,7 @@ export class ViewComponent {
   }
 
   isPartOf(): Boolean {
-    return this.joinStatus == GroupJoinStatusType.Joined;
+    return this.isOwner() || this.joinStatus == GroupJoinStatusType.Joined;
   }
 
   isPendingJoin(): Boolean {

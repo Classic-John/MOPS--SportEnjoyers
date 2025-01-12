@@ -1,5 +1,6 @@
 ﻿using Mops_fullstack.Server.Datalayer.Models;
 using Mops_fullstack.Server.Datalayer.Service_interfaces;
+using System.Data.Entity;
 
 namespace Mops_fullstack.Server.Core.Services
 {
@@ -27,5 +28,10 @@ namespace Mops_fullstack.Server.Core.Services
             => _unitOfWork.MatchRepo.GetTable()
                 .Where(match => match.FieldId == fieldId && match.MatchDate == matchDate)
                 .FirstOrDefault() != null;
+
+        public Match? GetOwnedBy(int matchId, int playerId)
+            => _unitOfWork.MatchRepo.GetTable()
+                .Where(match => match.Id == matchId && match.Group.OwnerId == playerId)
+                .FirstOrDefault();
     }
 }

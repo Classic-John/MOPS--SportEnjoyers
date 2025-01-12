@@ -33,7 +33,11 @@ namespace Mops_fullstack.Server.Core.Services
                 .Where(group => Filter.Name == null || Filter.Name == group.Name)
                 .Where(group => Filter.Owner == null || Filter.Owner == group.Owner.Name)
                 .Include(group => group.Players)
-                .Where(group => Filter.PlayerId == null || group.Players.Any(player => player.Id == Filter.PlayerId));
+                .Where(group =>
+                    Filter.PlayerId == null ||
+                    group.OwnerId == Filter.PlayerId ||
+                    group.Players.Any(player => player.Id == Filter.PlayerId)
+                );
         }
 
         public Group? GetGroupData(int id)
@@ -159,6 +163,16 @@ namespace Mops_fullstack.Server.Core.Services
                 return false;
             }
             return _unitOfWork.GroupRepo.Delete(group);
+        }
+
+        public ICollection<Match>? GetMatches(int groupId)
+        {
+            Group? group = _unitOfWork.GroupRepo.GetTable()
+                .Where(group => group.Id == groupId)
+                .Include(group => group.Matches)
+                .FirstOrDefault();
+
+            return group == null ? null : group.Matches;
         }
     }
 }

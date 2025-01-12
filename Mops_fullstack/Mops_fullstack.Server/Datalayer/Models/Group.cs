@@ -22,7 +22,7 @@ public partial class Group : BaseEntity, IGroup
 
     public ICollection<Thread> Threads { get; set; } = [];
 
-    public ICollection<Player> Players { get; set; } = new List<Player>();
+    public ICollection<Player> Players { get; set; } = [];
 
     public ICollection<Player> PlayerRequests { get; set; } = [];
 }

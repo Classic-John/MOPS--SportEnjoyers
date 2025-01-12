@@ -23,5 +23,7 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
         public bool HasMember(int groupId, int playerId);
 
         public bool DeleteGroup(int groupId);
+
+        public ICollection<Match>? GetMatches(int groupId);
     }
 }

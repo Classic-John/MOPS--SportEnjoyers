@@ -1,0 +1,11 @@
+<h2 class="page-title">Matches</h2>
+<app-list [itemList]="matchList" [showPaginator]="matchList.length > 10">
+  <ng-template let-match>
+    <div>
+      <p>Field: {{match.field.name}}</p>
+      <p>Field owner: {{match.field.owner.name}}</p>
+      <p>Date: {{match.matchDate}}(YYYY/MM/DD)</p>
+      <button mat-button class="form-submit-button" *ngIf="isYours && isUpcoming(match.matchDate)" (click)="deleteMatch(match.id)">Cancel</button>
+    </div>
+  </ng-template>
+</app-list>

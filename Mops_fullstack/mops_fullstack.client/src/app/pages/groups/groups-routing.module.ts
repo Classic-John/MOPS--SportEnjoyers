@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SearchComponent } from './search/search.component';
 import { RequestsComponent } from './requests/requests.component';
 import { CreateComponent } from './create/create.component';
-import { ViewComponent } from './view/view.component';
+import { ViewComponent } from './group/view/view.component';
 import { intParamGuard } from '../../shared/guards/intParam/int-param.guard';
 import { loggedGuard } from '../../shared/guards/logged/logged.guard';
 
@@ -24,7 +24,7 @@ const routes: Routes = [
   },
   {
     path: ':id',
-    component: ViewComponent,
+    loadChildren: () => import('./group/group.module').then(p => p.GroupModule),
     canActivate: [intParamGuard],
     data: { param: 'id', fallback: '/groups' }
   },

@@ -41,5 +41,20 @@ namespace Mops_fullstack.Server.Core.Services
                 .Include(player => player.GroupsOwned)
                 .ThenInclude(group => group.PlayerRequests)
                 .First();
+
+        public ICollection<Group> GetOwnedGroups(int id)
+        {
+            Player? player = _unitOfWork.PlayerRepo.GetTable()
+                .Where(player => player.Id == id)
+                .Include(player => player.GroupsOwned)
+                .FirstOrDefault();
+
+            if (player == null)
+            {
+                return [];
+            }
+            return player.GroupsOwned;
+        }
+                
     }
 }

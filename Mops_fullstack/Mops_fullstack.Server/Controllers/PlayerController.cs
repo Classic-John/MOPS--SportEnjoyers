@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Mops_fullstack.Server.Core.Services;
 using Mops_fullstack.Server.Datalayer.DTOs;
-using Mops_fullstack.Server.Datalayer.IMapperConverter;
 using Mops_fullstack.Server.Datalayer.Jwt;
 using Mops_fullstack.Server.Datalayer.Models;
 using Mops_fullstack.Server.Datalayer.Service_interfaces;
@@ -94,6 +92,19 @@ namespace Mops_fullstack.Server.Controllers
             }
 
             return Ok(joinRequests);
+        }
+
+        [HttpGet("groups")]
+        [ProducesResponseType(typeof(ICollection<GroupSearchDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
+        public IActionResult GetGroupsOwned()
+        {
+            if (HttpContext.Items["Player"] is not Player player)
+            {
+                return Unauthorized("Cannot send a group join request because no user is logged in.");
+            }
+
+            return Ok(_playerService.GetOwnedGroups(player.Id).Select(group => _mapper.Map<GroupSearchDTO>(group)));
         }
 
         /*[HttpPut("UpdatePlayer")]

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { GroupsRoutingModule } from './groups-routing.module';
 import { SearchComponent } from './search/search.component';
-import { ViewComponent } from './view/view.component';
+import { ViewComponent } from './group/view/view.component';
 import { RequestsComponent } from './requests/requests.component';
 import { CreateComponent } from './create/create.component';
 
@@ -15,6 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedComponentsModule } from '../../shared/components/shared-components.module';
+import { MatchesComponent } from './group/matches/matches.component';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { SharedComponentsModule } from '../../shared/components/shared-component
     ViewComponent,
     RequestsComponent,
     CreateComponent,
+    MatchesComponent,
   ],
   imports: [
     CommonModule,

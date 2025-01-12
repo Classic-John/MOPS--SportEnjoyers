@@ -50,4 +50,8 @@ export class GroupService {
   deleteGroup(id: Number): Observable<any> {
     return this.apiService.delete(`${this.route}${id}`);
   }
+
+  getMatches(id: Number): Observable<any> {
+    return this.apiService.get(`${this.route}${id}/matches`);
+  }
 }

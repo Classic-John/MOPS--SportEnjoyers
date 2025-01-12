@@ -39,9 +39,9 @@ namespace Mops_fullstack.Server.Controllers
             {
                 return Unauthorized("Cannot create a new match because the field is already reserved at that date.");
             }
-            if (!_groupService.HasMember(match.GroupId, player.Id))
+            if (!_groupService.IsOwnedBy(match.GroupId, player.Id))
             {
-                return Unauthorized("Cannot create a new match because you are not a member of that group.");
+                return Unauthorized("Cannot create a new match because you do not own that group.");
             }
 
             Match? newMatch = _matchService.AddItem(_mapper.Map<Match>(match));
@@ -50,6 +50,26 @@ namespace Mops_fullstack.Server.Controllers
                 return BadRequest();
             }
             return Ok(_mapper.Map<MatchDTO>(newMatch));
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteMatch([FromRoute] int id)
+        {
+            if (HttpContext.Items["Player"] is not Player player)
+            {
+                return Unauthorized("Cannot delete the because the user is not authenticated.");
+            }
+
+            Match? match = _matchService.GetOwnedBy(id, player.Id);
+            if (match == null)
+            {
+                return NotFound("Could not find the requested match owned by the logged in player.");
+            }
+            _matchService.RemoveItem(match);
+            return NoContent();
         }
 
         /*[HttpGet("GetMatches")]

@@ -9,5 +9,7 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
         public Player? GetPlayerWithEmail(string Email);
 
         public Player GetWithJoinRequests(int id);
+
+        public ICollection<Group> GetOwnedGroups(int id);
     }
 }
