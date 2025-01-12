@@ -5,5 +5,6 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
 {
     public interface IMatchService : IBaseService<Match>
     {
+        public bool AlreadyReserved(int fieldId, string matchDate);
     }
 }

@@ -13,7 +13,11 @@ import { Group } from '../../../shared/interfaces/groups/group.interface';
 export class CreateComponent {
   createGroupForm: FormGroup;
 
-  constructor(private readonly router: Router, private readonly groupService: GroupService, fb: FormBuilder) {
+  constructor(
+    private readonly router: Router,
+    private readonly groupService: GroupService,
+    fb: FormBuilder
+  ) {
     this.createGroupForm = fb.group({
       name: ["", Validators.compose([Validators.required, Validators.maxLength(25)])]
     });

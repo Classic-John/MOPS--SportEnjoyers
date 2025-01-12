@@ -1,13 +1,13 @@
-<app-centered *ngIf="groupId != null">
+<app-centered *ngIf="group != null">
   <mat-card content class="form_card">
     <mat-card-header>
-      <mat-card-title>{{group?.name}}</mat-card-title>
+      <mat-card-title>{{group.name}}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p>Group owner: {{group?.owner?.name}}</p>
+      <p>Group owner: {{group.owner.name}}</p>
       <p>Players:</p>
       <ul>
-        <li *ngFor="let player of group?.players">
+        <li *ngFor="let player of group.players">
           <button mat-button *ngIf="isOwner(); else regular" (click)="kickPlayer(player.id)"><mat-icon fontIcon="person_remove"></mat-icon> {{player.name}}, {{player.age}}</button>
           <ng-template #regular><p>{{player.name}}, {{player.age}}</p></ng-template>
         </li>

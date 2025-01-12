@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -33,6 +32,7 @@ namespace Mops_fullstack.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OwnerId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -118,7 +118,7 @@ namespace Mops_fullstack.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MatchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MatchDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GroupId = table.Column<int>(type: "int", nullable: false),
                     FieldId = table.Column<int>(type: "int", nullable: false)
                 },

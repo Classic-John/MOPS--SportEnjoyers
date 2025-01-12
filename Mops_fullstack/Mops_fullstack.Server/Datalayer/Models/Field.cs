@@ -12,6 +12,9 @@ namespace Mops_fullstack.Server.Datalayer.Models;
 public partial class Field : BaseEntity, IField
 {
     [Required]
+    public string Name { get; set; } = null!;
+
+    [Required]
     public string Location { get; set; } = null!;
 
     [Required]
@@ -19,5 +22,5 @@ public partial class Field : BaseEntity, IField
 
     public Player Owner { get; set; } = null!;
 
-    public List<Match> Matches { get; set; } = [];
+    public ICollection<Match> Matches { get; set; } = [];
 }

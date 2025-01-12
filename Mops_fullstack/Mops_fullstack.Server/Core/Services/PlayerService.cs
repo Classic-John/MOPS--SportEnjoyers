@@ -20,8 +20,8 @@ namespace Mops_fullstack.Server.Core.Services
         public Player? AddItem(Player entity)
             => _unitOfWork.PlayerRepo.Add(entity);
 
-        public Player GetItem(int? id)
-            => GetItems().FirstOrDefault(player => player.Id==id.Value);
+        public Player? GetItem(int id)
+            => GetItems().FirstOrDefault(player => player.Id==id);
 
         public Player? GetPlayerWithEmail(string Email)
             => GetItems().FirstOrDefault(player => player.Email == Email);

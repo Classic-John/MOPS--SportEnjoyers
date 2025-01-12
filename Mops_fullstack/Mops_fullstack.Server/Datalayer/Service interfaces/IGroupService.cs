@@ -20,6 +20,8 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
 
         public bool IsOwnedBy(int groupId, int playerId);
 
+        public bool HasMember(int groupId, int playerId);
+
         public bool DeleteGroup(int groupId);
     }
 }

@@ -1,0 +1,47 @@
+<app-sidenav>
+  <div nav>
+    <h4>Search fields:</h4>
+
+    <form [formGroup]="filterForm" (ngSubmit)="search(filterForm.getRawValue())">
+      <mat-form-field class="form-field">
+        <mat-label>Field name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <mat-label>Field location</mat-label>
+        <input matInput formControlName="location" />
+      </mat-form-field>
+      <mat-form-field class="form-field" *ngIf="!isYoursActivated()">
+        <mat-label>Field owner</mat-label>
+        <input matInput formControlName="owner" />
+      </mat-form-field>
+      <div class="form-field" *ngIf="isLoggedIn()">
+        <mat-slide-toggle formControlName="yours" labelPosition="before">Your fields</mat-slide-toggle>
+      </div>
+      <br />
+      <mat-form-field class="form-field" *ngIf="searchByDay">
+        <mat-label>Free on day</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="freeOnDay" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-slide-toggle labelPosition="before" [(ngModel)]="searchByDay" [ngModelOptions]="{standalone: true}">Search by day</mat-slide-toggle>
+      <br />
+      <br />
+      <button mat-button class="form-submit-button" type="submit">Search</button>
+    </form>
+  </div>
+  <div content>
+    <h2 class="page-title">Field list</h2>
+    <app-cardlist [itemList]="fieldList" [showPaginator]="fieldList.length > 10" linkPath="id">
+      <ng-template let-field>
+        <div>
+          <p>Field name: {{field.name}}</p>
+          <p>Field owner: {{field.owner.name}}</p>
+          <p>Field location: {{field.location}}</p>
+        </div>
+      </ng-template>
+    </app-cardlist>
+  </div>
+</app-sidenav>

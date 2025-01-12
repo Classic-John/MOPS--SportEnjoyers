@@ -28,6 +28,13 @@ namespace Mops_fullstack.Server.Datalayer.IMapperConverter
             CreateMap<Group, GroupDTO>();
             CreateMap<Group, GroupSearchDTO>(MemberList.Destination);
             CreateMap<CreateGroupDTO, Group>(MemberList.Source);
+
+            CreateMap<Field, FieldDTO>();
+            CreateMap<Field, FieldSearchDTO>(MemberList.Destination);
+            CreateMap<CreateFieldDTO, Field>(MemberList.Source);
+
+            CreateMap<Match, MatchDTO>(MemberList.Destination);
+            CreateMap<CreateMatchDTO, Match>(MemberList.Source);
         }
     }
 }

@@ -8,6 +8,8 @@ const PROXY_CONFIG = [
     context: [
       "/api/player",
       "/api/group",
+      "/api/field",
+      "/api/match",
     ],
     target,
     secure: false,

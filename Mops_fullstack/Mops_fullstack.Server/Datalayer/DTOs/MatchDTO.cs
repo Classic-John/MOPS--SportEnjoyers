@@ -1,16 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Mops_fullstack.Server.Datalayer.BaseClass;
-using Mops_fullstack.Server.Datalayer.IMapperConverter;
-using Mops_fullstack.Server.Datalayer.Models;
-
-namespace Mops_fullstack.Server.Datalayer.DTOs
+﻿namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class MatchDTO : BaseEntity
+    public class MatchDTO
     {
-        [Required]
-        public DateTime MatchDate { get; set; }
-        [Required]
-        public int AssociatedGroupId { get; set; }
-        public virtual Group AssociatedGroup { get; set; } = null!;
+        public int Id { get; set; }
+
+        public FieldSearchDTO Field { get; set; } = null!;
+
+        public GroupSearchDTO Group { get; set; } = null!;
+
+        public string MatchDate { get; set; } = null!;
+    }
+
+    public class CreateMatchDTO
+    {
+        public int FieldId { get; set; }
+
+        public int GroupId { get; set; }
+
+        public string MatchDate { get; set; } = null!;
     }
 }

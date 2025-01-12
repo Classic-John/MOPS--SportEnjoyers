@@ -47,7 +47,6 @@ namespace Mops_fullstack.Server.Controllers
             }
 
             group.OwnerId = player.Id;
-            group.Players.Add(player);
             Group? new_group = _groupService.AddItem(_mapper.Map<Group>(group));
             return new_group != null ? Ok(_mapper.Map<GroupDTO>(new_group)) : BadRequest();
         }

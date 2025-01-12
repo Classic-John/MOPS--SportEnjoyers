@@ -110,17 +110,12 @@ mat-card-content {
     - You are member of
 
   Field operations:
-    - create field
-    - search fields with filter
-    - make reservation(not possible yet)
-    - delte field(if you own it)
-    - cancel reservation(if you made it)
+    - create field POST /api/field /fields/create
+    - search fields with filter GET /api/field /fields
+    - delete field(if you own it) DELETE /api/field /fields/{id}
 
   Field filter options:
     - owner by username(special owned by you option) - text
-    - reserver by username(special reserved by you option) - text
-    - only not reserved - checkbox
-    - sports - checkbox group
-    - time period - datepicker
-    - 
+    - only not reserved - toggle slider
+    - day - datepicker (optional with slider)
 */

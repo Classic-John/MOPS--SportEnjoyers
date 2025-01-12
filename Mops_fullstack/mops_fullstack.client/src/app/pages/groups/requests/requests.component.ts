@@ -20,13 +20,13 @@ export class RequestsComponent {
       error: (err) => {
         console.log(err);
       }
-    })
+    });
   }
 
   sendVerdict(groupId: Number, playerId: Number, verdict: Boolean) {
     this.groupService.sendJoinVerdict(groupId, { playerId: playerId, accepted: verdict }).subscribe({
       next: () => {
-        this.requestList = this.requestList.filter((request, _index, _array) => 
+        this.requestList = this.requestList.filter((request, _index, _array) =>
           request.group.id != groupId || request.player.id != playerId
         );
         console.log("Verdict submitted successfully!");
@@ -34,6 +34,6 @@ export class RequestsComponent {
       error: (err) => {
         console.log("Error: ", err);
       }
-    })
+    });
   }
 }

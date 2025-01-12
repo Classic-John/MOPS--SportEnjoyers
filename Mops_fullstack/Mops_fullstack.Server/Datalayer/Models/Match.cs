@@ -11,7 +11,7 @@ namespace Mops_fullstack.Server.Datalayer.Models;
 public partial class Match : BaseEntity, IMatch
 {
     [Required]
-    public DateTime MatchDate { get; set; }
+    public string MatchDate { get; set; } = null!;
 
     [Required]
     public int GroupId { get; set; }

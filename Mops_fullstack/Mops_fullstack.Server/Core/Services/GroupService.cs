@@ -15,8 +15,8 @@ namespace Mops_fullstack.Server.Core.Services
         public Group? AddItem(Group entity)
             => _unitOfWork.GroupRepo.Add(entity);
 
-        public Group GetItem(int? id)
-            => GetItems().FirstOrDefault(group => group.Id == id.Value);
+        public Group? GetItem(int id)
+            => GetItems().FirstOrDefault(group => group.Id == id);
 
         public List<Group> GetItems()
             => _unitOfWork.GroupRepo.GetAllItems();
@@ -37,18 +37,10 @@ namespace Mops_fullstack.Server.Core.Services
         }
 
         public Group? GetGroupData(int id)
-        {
-            Group? group = _unitOfWork.GroupRepo.GetTable()
+            => _unitOfWork.GroupRepo.GetTable()
                 .Where(group => group.Id == id)
                 .Include(group => group.Players)
                 .FirstOrDefault();
-
-            if (group != null)
-            {
-                group.Players = group.Players.Where(player => player.Id != group.OwnerId).ToList();
-            }
-            return group;
-        }
 
         public bool AddJoinRequest(int groupId, Player player)
         {
@@ -147,6 +139,13 @@ namespace Mops_fullstack.Server.Core.Services
         public bool IsOwnedBy(int groupId, int playerId)
             => _unitOfWork.GroupRepo.GetTable()
                 .Where(group => group.Id == groupId && group.OwnerId == playerId)
+                .FirstOrDefault() != null;
+
+        public bool HasMember(int groupId, int playerId)
+            => _unitOfWork.GroupRepo.GetTable()
+                .Where(group => group.Id == groupId)
+                .Include(group => group.Players)
+                .Where(group => group.Players.Where(player => player.Id == playerId).FirstOrDefault() != null)
                 .FirstOrDefault() != null;
 
         public bool DeleteGroup(int groupId)

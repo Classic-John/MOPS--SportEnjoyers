@@ -1,0 +1,36 @@
+<app-centered *ngIf="field != null">
+  <mat-card content class="form_card">
+    <mat-card-header>
+      <mat-card-title>{{field.name}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Field owner: {{field.owner.name}}</p>
+      <p>Field location: {{field.location}}</p>
+      <form *ngIf="groupList.length > 0" id="reserveFieldForm" [formGroup]="reserveFieldForm" (ngSubmit)="reserveField(reserveFieldForm.getRawValue())">
+        <div class="form-field">
+          <mat-form-field>
+            <mat-label>Reserve on day</mat-label>
+            <input matInput [matDatepicker]="picker" [matDatepickerFilter]="reservedDates" [min]="today" formControlName="matchDate" />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="form-field">
+          <mat-form-field>
+            <mat-label>Group</mat-label>
+            <mat-select formControlName="groupId">
+              <mat-option *ngFor="let group of groupList" [value]="group.id">
+                {{group.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button type="submit" form="reserveFieldForm" [disabled]="reserveFieldForm === undefined || !reserveFieldForm.valid">Make Reservation</button>
+      <button mat-button *ngIf="field.isYours" (click)="deleteField()">Delete</button>
+    </mat-card-actions>
+  </mat-card>
+</app-centered>

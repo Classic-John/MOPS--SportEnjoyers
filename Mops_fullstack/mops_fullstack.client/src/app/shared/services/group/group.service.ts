@@ -11,7 +11,7 @@ import { GroupJoinVerdict } from '../../interfaces/requests/join-verdict.interfa
   providedIn: 'root'
 })
 export class GroupService {
-  private route = "group/"
+  private route = "group/";
 
   constructor(private readonly apiService: ApiService) { }
 

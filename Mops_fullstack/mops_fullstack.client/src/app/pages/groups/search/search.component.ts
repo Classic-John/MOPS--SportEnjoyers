@@ -24,7 +24,6 @@ export class SearchComponent {
   ) {
     this.route.queryParamMap.subscribe(params => {
       let filter = new GroupFilter(params);
-      console.log(filter);
       this.filterForm = fb.group({
         name: filter.name ?? "",
         owner: filter.owner ?? "",
@@ -41,34 +40,16 @@ export class SearchComponent {
         }
       });
     });
-
-    /*this.groupList = [
-      { owner: { name: 'john', email: '', age: 0 }, name: 'group1', id: 1 },
-      { owner: { name: 'john', email: '', age: 0 }, name: 'group1', id: 1 },
-      { owner: { name: 'john', email: '', age: 0 }, name: 'group1', id: 1 },
-      { owner: { name: 'john', email: '', age: 0 }, name: 'group1', id: 1 },
-      { owner: { name: 'john', email: '', age: 0 }, name: 'group1', id: 1 },
-      { owner: { name: 'sam', email: '', age: 0 }, name: 'group2', id: 2 }
-    ]*/
   }
 
   search(groupFilter: GroupFilter) {
-    this.groupService.getAllThatMatch(groupFilter).subscribe({
-      next: (groups) => {
-        console.log(groups);
-
-        this.router.navigate(
-          [],
-          {
-            relativeTo: this.route,
-            queryParams: groupFilter,
-            queryParamsHandling: 'merge'
-          }
-        );
-      },
-      error: (err) => {
-        console.log("Error: ", err);
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: groupFilter,
+        queryParamsHandling: 'merge'
       }
-    });
+    );
   }
 }

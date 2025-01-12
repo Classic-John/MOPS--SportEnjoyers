@@ -1,6 +1,19 @@
 <mat-toolbar color="primary">
   <a class="nav_item" mat-button routerLink="''">Home</a>
-  <a class="nav_item" mat-button routerLink="fields">Fields</a>
+  <app-automenu class="nav_item" *ngIf="isLoggedIn(); else fieldsLoggedOut">
+    <button mat-button trigger routerLink="fields">Fields</button>
+    <div content>
+      <a mat-menu-item routerLink="fields/create">
+        <span>Create</span>
+      </a>
+      <a mat-menu-item routerLink="fields" [queryParams]="{yours: 'true'}">
+        <span>Your fields</span>
+      </a>
+    </div>
+  </app-automenu>
+  <ng-template #fieldsLoggedOut>
+    <a class="nav_item" mat-button routerLink="fields">Fields</a>
+  </ng-template>
   <app-automenu class="nav_item" *ngIf="isLoggedIn(); else groupsLoggedOut">
     <button mat-button trigger routerLink="groups">Groups</button>
     <div content>

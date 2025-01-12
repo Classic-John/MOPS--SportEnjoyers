@@ -4,6 +4,8 @@ import { GroupService } from '../../../shared/services/group/group.service';
 import { GroupJoinStatus, GroupJoinStatusType } from '../../../shared/interfaces/requests/join-status.interface';
 import { AuthorizationService } from '../../../shared/services/auth/authorization.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FieldService } from '../../../shared/services/field/field.service';
+import { Field } from '../../../shared/interfaces/fields/field.interface';
 
 @Component({
   selector: 'app-view',
@@ -15,18 +17,6 @@ export class ViewComponent {
   groupId: Number | null = null;
   joinStatus: GroupJoinStatusType = GroupJoinStatusType.NoRequest;
   isLoggedIn = AuthorizationService.isLoggedIn;
-
-  isPartOf(): Boolean {
-    return this.joinStatus == GroupJoinStatusType.Joined;
-  }
-
-  isPendingJoin(): Boolean {
-    return this.joinStatus == GroupJoinStatusType.Pending;
-  }
-
-  isOwner(): Boolean {
-    return this.group?.isYours ?? false;
-  }
 
   constructor(route: ActivatedRoute, private readonly groupService: GroupService, private readonly router: Router) {
     route.paramMap.subscribe({
@@ -54,6 +44,18 @@ export class ViewComponent {
         });
       }
     });
+  }
+
+  isPartOf(): Boolean {
+    return this.joinStatus == GroupJoinStatusType.Joined;
+  }
+
+  isPendingJoin(): Boolean {
+    return this.joinStatus == GroupJoinStatusType.Pending;
+  }
+
+  isOwner(): Boolean {
+    return this.group?.isYours ?? false;
   }
 
   sendJoinRequest() {

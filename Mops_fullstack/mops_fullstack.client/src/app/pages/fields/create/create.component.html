@@ -1,0 +1,26 @@
+<app-centered>
+  <mat-card class="form_card" content>
+    <mat-card-header>
+      <mat-card-title>Create a new field</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form id="createFieldForm" [formGroup]="createFieldForm" (ngSubmit)="createField(createFieldForm.getRawValue())">
+        <div class="form_field">
+          <mat-form-field>
+            <mat-label>Enter field name</mat-label>
+            <input matInput maxlength="25" formControlName="name" placeholder="My Field"/>
+          </mat-form-field>
+        </div>
+        <div class="form_field">
+          <mat-form-field>
+            <mat-label>Enter field location</mat-label>
+            <input matInput maxlength="50" formControlName="location" placeholder="My Location"/>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button class="form-submit-button" type="submit" [disabled]="!createFieldForm.valid" form="createFieldForm">Create</button>
+    </mat-card-actions>
+  </mat-card>
+</app-centered>

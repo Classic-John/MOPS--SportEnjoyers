@@ -20,10 +20,10 @@ namespace Mops_fullstack.Server.Datalayer.Jwt
                 return;
             }
 
-            var playerId = jwtUtils.ValidatePlayerJwtToken(token);
+            int? playerId = jwtUtils.ValidatePlayerJwtToken(token);
             if (playerId != null)
             {
-                httpContext.Items["Player"] = playerService.GetItem(playerId);
+                httpContext.Items["Player"] = playerService.GetItem((int)playerId);
                 Console.WriteLine($"Found player id {playerId}");
             }
 

@@ -11,8 +11,8 @@ namespace Mops_fullstack.Server.Core.Services
         public Message? AddItem(Message entity)
             => _unitOfWork.MessageRepo.Add(entity);
 
-        public Message GetItem(int? id)
-            => GetItems().FirstOrDefault(message => message.Id == id.Value);
+        public Message? GetItem(int id)
+            => GetItems().FirstOrDefault(message => message.Id == id);
 
         public List<Message> GetItems()
             => _unitOfWork.MessageRepo.GetAllItems();

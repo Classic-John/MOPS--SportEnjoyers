@@ -20,7 +20,6 @@ import { AppComponent } from './app.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { FieldsComponent } from './pages/fields/fields.component';
 import { ThreadsComponent } from './pages/threads/threads.component';
 import { AuthorizationService } from './shared/services/auth/authorization.service';
 import { HomeComponent } from './pages/home/home.component';
@@ -33,7 +32,6 @@ import { GroupsModule } from './pages/groups/groups.module';
     HomeComponent,
     RegisterComponent,
     LoginComponent,
-    FieldsComponent,
     ThreadsComponent
   ],
   imports: [

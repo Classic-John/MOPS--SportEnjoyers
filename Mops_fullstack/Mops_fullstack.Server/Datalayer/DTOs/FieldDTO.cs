@@ -1,17 +1,55 @@
-﻿using Mops_fullstack.Server.Datalayer.BaseClass;
-using Mops_fullstack.Server.Datalayer.IMapperConverter;
-using Mops_fullstack.Server.Datalayer.Models;
-using System.ComponentModel.DataAnnotations;
+﻿
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class FieldDTO : BaseEntity
+    public class FieldSearchDTO
     {
-        [Required]
-        public int AreaOwnerId { get; set; }
-        [Required]
+        public int Id { get; set; }
+
+        public string Name { get; set; } = null!;
+
+        public PlayerDTO Owner { get; set; } = null!;
+
+        public string Location { get; set; } = null!;
+    }
+
+    public class FieldDTO
+    {
+        public string Name { get; set; } = null!;
+
+        public PlayerDTO Owner { get; set; } = null!;
+
         public string Location { get; set; } = null!;
 
-        public virtual Owner AreaOwner { get; set; } = null!;
+        public ICollection<string> ReservedDates { get; set; } = [];
+
+        public bool? IsYours { get; set; } = false;
+    }
+
+    public class CreateFieldDTO
+    {
+        public string Name { get; set; } = null!;
+
+        [SwaggerIgnore]
+        public int? OwnerId { get; set; }
+
+        public string Location { get; set; } = null!;
+    }
+
+    public class FieldFilterDTO
+    {
+        public string? Name { get; set; }
+
+        public string? Owner { get; set; }
+
+        public string? Location { get; set; }
+
+        public bool Yours { get; set; } = false;
+
+        [SwaggerIgnore]
+        public int? OwnerId { get; set; }
+
+        public string? FreeOnDay { get; set; }
     }
 }
