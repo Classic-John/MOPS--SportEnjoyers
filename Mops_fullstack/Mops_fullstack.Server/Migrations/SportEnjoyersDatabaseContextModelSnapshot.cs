@@ -250,7 +250,7 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayersId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -265,7 +265,7 @@ namespace Mops_fullstack.Server.Migrations
                     b.HasOne("Mops_fullstack.Server.Datalayer.Models.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

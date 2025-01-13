@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CreateThread } from '../../../../../shared/interfaces/threads/create-thread.interface';
 import { ThreadService } from '../../../../../shared/services/thread/thread.service';
 import { ThreadSummary } from '../../../../../shared/interfaces/threads/thread-summary.interface';
-import { Group } from '../../../../../shared/interfaces/groups/group.interface';
 
 @Component({
   selector: 'app-threads',

@@ -1,5 +1,4 @@
 ﻿using Mops_fullstack.Server.Core.BaseInterface;
-using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.Models;
 
 namespace Mops_fullstack.Server.Datalayer.Service_interfaces
@@ -11,5 +10,7 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
         public Player GetWithJoinRequests(int id);
 
         public ICollection<Group> GetOwnedGroups(int id);
+
+        public bool DeleteAccount(int id);
     }
 }

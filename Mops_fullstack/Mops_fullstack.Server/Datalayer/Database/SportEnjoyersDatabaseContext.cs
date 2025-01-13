@@ -58,7 +58,7 @@ public partial class SportEnjoyersDatabaseContext : DbContext
             entity.HasMany(d => d.Players).WithMany(p => p.Groups)
                 .UsingEntity<Dictionary<string, object>>(
                     "GroupPlayer",
-                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayersId").OnDelete(DeleteBehavior.NoAction),
+                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayersId").OnDelete(DeleteBehavior.Cascade),
                     l => l.HasOne<Group>().WithMany().HasForeignKey("GroupsId").OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {
@@ -70,7 +70,7 @@ public partial class SportEnjoyersDatabaseContext : DbContext
             entity.HasMany(d => d.PlayerRequests).WithMany(p => p.GroupRequests)
                 .UsingEntity<Dictionary<string, object>>(
                     "JoinRequests",
-                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayerId").OnDelete(DeleteBehavior.NoAction),
+                    r => r.HasOne<Player>().WithMany().HasForeignKey("PlayerId").OnDelete(DeleteBehavior.Cascade),
                     l => l.HasOne<Group>().WithMany().HasForeignKey("GroupId").OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {

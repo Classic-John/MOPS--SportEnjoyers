@@ -24,4 +24,8 @@ export class PlayerService {
   getGroupsOwned(): Observable<any> {
     return this.apiService.get<Group>(`${this.route}groups`);
   }
+
+  delete(): Observable<any> {
+    return this.apiService.delete(`${this.route}`);
+  }
 }

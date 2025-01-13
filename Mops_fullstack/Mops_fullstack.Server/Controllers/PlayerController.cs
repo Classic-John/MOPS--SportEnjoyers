@@ -13,12 +13,14 @@ namespace Mops_fullstack.Server.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly IPlayerService _playerService;
+        private readonly IGroupService _groupService;
         private readonly IJwtUtils _jwtUtils;
         private readonly IMapper _mapper;
 
-        public PlayerController(IPlayerService playerService, IJwtUtils jwtUtils, IMapper mapper)
+        public PlayerController(IPlayerService playerService, IGroupService groupService, IJwtUtils jwtUtils, IMapper mapper)
         {
             _playerService = playerService;
+            _groupService = groupService;
             _jwtUtils = jwtUtils;
             _mapper = mapper;
         }
@@ -101,10 +103,38 @@ namespace Mops_fullstack.Server.Controllers
         {
             if (HttpContext.Items["Player"] is not Player player)
             {
-                return Unauthorized("Cannot send a group join request because no user is logged in.");
+                return Unauthorized("Cannot get groups owned because no user is logged in.");
             }
 
             return Ok(_playerService.GetOwnedGroups(player.Id).Select(group => _mapper.Map<GroupSearchDTO>(group)));
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeletePlayer()
+        {
+            if (HttpContext.Items["Player"] is not Player player)
+            {
+                return Unauthorized("Cannot delete account because no user is logged in.");
+            }
+
+            ICollection<Group> groups = _playerService.GetOwnedGroups(player.Id);
+            foreach(Group group in groups.ToArray())
+            {
+                if (!_groupService.RemoveItem(group))
+                {
+                    return BadRequest("Cannot delete player account because could not delete owned groups.");
+                }
+            }
+
+            if (!_playerService.RemoveItem(player))
+            {
+                return NotFound("Cannot delete player account because it was not found.");
+            }
+            return NoContent();
         }
 
         /*[HttpPut("UpdatePlayer")]

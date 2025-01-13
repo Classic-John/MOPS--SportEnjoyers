@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { PlayerService } from '../../shared/services/player/player.service';
 import { AuthorizationService } from '../../shared/services/auth/authorization.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -8,16 +9,20 @@ import { AuthorizationService } from '../../shared/services/auth/authorization.s
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  constructor(private readonly playerService: PlayerService, private readonly authService: AuthorizationService) { }
+  loggedInPlayer = AuthorizationService.getLoggedInPlayer
 
-  getAllPlayers() {
-    this.playerService.getAll().subscribe({
-      next: players => {
-        console.log(players);
+  constructor(private readonly playerService: PlayerService, private readonly router: Router) { }
+
+  deleteAccount() {
+    this.playerService.delete().subscribe({
+      next: () => {
+        console.log("Deleted account successfully!");
+        AuthorizationService.logout();
+        this.router.navigate(["/login"]);
       },
-      error: err => {
+      error: (err) => {
         console.log("Error: ", err);
       }
-    })
+    });
   }
 }

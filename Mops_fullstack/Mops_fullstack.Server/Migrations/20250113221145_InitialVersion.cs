@@ -93,7 +93,8 @@ namespace Mops_fullstack.Server.Migrations
                         name: "FK_GroupPlayer_Players_PlayersId",
                         column: x => x.PlayersId,
                         principalTable: "Players",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,7 +117,8 @@ namespace Mops_fullstack.Server.Migrations
                         name: "FK_JoinRequests_Players_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "Players",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

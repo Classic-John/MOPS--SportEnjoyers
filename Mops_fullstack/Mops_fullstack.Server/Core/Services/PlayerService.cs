@@ -55,6 +55,18 @@ namespace Mops_fullstack.Server.Core.Services
             }
             return player.GroupsOwned;
         }
-                
+        
+        public bool DeleteAccount(int id)
+        {
+            Player? player = _unitOfWork.PlayerRepo.GetTable()
+                .Where(player => player.Id == id)
+                .FirstOrDefault();
+
+            if (player is null)
+            {
+                return false;
+            }
+            return RemoveItem(player);
+        }
     }
 }
