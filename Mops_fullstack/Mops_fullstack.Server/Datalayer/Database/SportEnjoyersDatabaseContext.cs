@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Mops_fullstack.Server.Datalayer.BaseClass;
 using Mops_fullstack.Server.Datalayer.Models;
 using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
@@ -118,13 +119,6 @@ public partial class SportEnjoyersDatabaseContext : DbContext
             entity.HasOne(d => d.Player).WithMany(p => p.Messages).HasForeignKey(d => d.PlayerId);
         });
 
-        /*modelBuilder.Entity<Player>(entity =>
-        {
-            entity.HasIndex(e => e.AreaOwnerId, "IX_Players_AreaOwnerId");
-
-            entity.HasOne(d => d.AreaOwner).WithMany(p => p.Players).HasForeignKey(d => d.AreaOwnerId);
-        });*/
-
         modelBuilder.Entity<Thread>(entity =>
         {
             entity.HasIndex(e => e.GroupId, "IX_Threads_GroupId");
@@ -136,6 +130,48 @@ public partial class SportEnjoyersDatabaseContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public override int SaveChanges()
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is BaseEntity && (
+                e.State == EntityState.Added || e.State == EntityState.Modified
+            ));
+
+        foreach (var entry in entries)
+        {
+            ((BaseEntity)entry.Entity).DateModified = DateTime.Now;
+
+            if (entry.State == EntityState.Added)
+            {
+                ((BaseEntity)entry.Entity).DateCreated = DateTime.Now;
+            }
+        }
+
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is BaseEntity && (
+                e.State == EntityState.Added || e.State == EntityState.Modified
+            ));
+
+        foreach (var entry in entries)
+        {
+            ((BaseEntity)entry.Entity).DateModified = DateTime.Now;
+
+            if (entry.State == EntityState.Added)
+            {
+                ((BaseEntity)entry.Entity).DateCreated = DateTime.Now;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
 }
 public static class DbSetExtensions
 {

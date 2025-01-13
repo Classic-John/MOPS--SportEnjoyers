@@ -1,0 +1,24 @@
+<h2 class="page-title">Threads</h2>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>Create a new thread</mat-panel-title>
+    <mat-panel-description>Start with a message</mat-panel-description>
+  </mat-expansion-panel-header>
+  <form [formGroup]="threadForm" id="createThreadForm" (ngSubmit)="createThread(threadForm.getRawValue())">
+    <div class="form-field">
+      <mat-form-field>
+        <mat-label>Write message here...</mat-label>
+        <textarea matInput formControlName="initialMessage"></textarea>
+      </mat-form-field>
+    </div>
+    <button mat-button type="submit" class="form-submit-button" [disabled]="!threadForm.valid">Create thread</button>
+  </form>
+</mat-expansion-panel>
+<app-cardlist [itemList]="threadList" [showPaginator]="threadList.length > 10">
+  <ng-template let-thread>
+    <div style="padding: 10px;">
+      <p><b>{{thread.initialMessage.player.name}}, {{thread.initialMessage.player.age}}</b></p>
+      <p>{{thread.initialMessage.text.length > 100 ? thread.initialMessage.text.slice(0, 100) + '...' : thread.initialMessage.text}}</p>
+    </div>
+  </ng-template>
+</app-cardlist>

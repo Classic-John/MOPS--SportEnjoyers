@@ -51,5 +51,12 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
         public int? OwnerId { get; set; }
 
         public string? FreeOnDay { get; set; }
+
+        public FieldFilterDTO() { }
+
+        public FieldFilterDTO(string freeOnDay)
+        {
+            FreeOnDay = freeOnDay;
+        }
     }
 }

@@ -5,5 +5,6 @@ namespace Mops_fullstack.Server.Datalayer.Service_interfaces
 {
     public interface IMessageService : IBaseService<Message>
     {
+        public bool IsOwnedBy(int messageId, int playerId);
     }
 }

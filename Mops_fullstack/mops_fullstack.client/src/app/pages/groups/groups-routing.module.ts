@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
 import { SearchComponent } from './search/search.component';
 import { RequestsComponent } from './requests/requests.component';
 import { CreateComponent } from './create/create.component';
@@ -26,7 +26,12 @@ const routes: Routes = [
     path: ':id',
     loadChildren: () => import('./group/group.module').then(p => p.GroupModule),
     canActivate: [intParamGuard],
-    data: { param: 'id', fallback: '/groups' }
+    data: {
+      param: 'id',
+      fallback: (_route: ActivatedRouteSnapshot, router: Router) => {
+        return router.createUrlTree(['/groups']);
+      }
+    }
   },
   {
     path: '**',

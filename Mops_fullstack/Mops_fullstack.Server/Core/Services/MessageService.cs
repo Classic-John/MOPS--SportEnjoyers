@@ -22,5 +22,10 @@ namespace Mops_fullstack.Server.Core.Services
 
         public bool UpdateItem(Message entity)
             => _unitOfWork.MessageRepo.Update(entity);
+
+        public bool IsOwnedBy(int messageId, int playerId)
+            => _unitOfWork.MessageRepo.GetTable()
+                .Where(message => message.Id == messageId && message.PlayerId == playerId)
+                .FirstOrDefault() != null;
     }
 }

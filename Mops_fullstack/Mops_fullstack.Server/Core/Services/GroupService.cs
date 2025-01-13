@@ -4,6 +4,7 @@ using Mops_fullstack.Server.Datalayer.Service_interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 using NuGet.DependencyResolver;
+using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
 namespace Mops_fullstack.Server.Core.Services
 {
@@ -173,6 +174,24 @@ namespace Mops_fullstack.Server.Core.Services
                 .FirstOrDefault();
 
             return group == null ? null : group.Matches;
+        }
+
+        public bool IsMember(int groupId, int playerId)
+            => _unitOfWork.GroupRepo.GetTable()
+                .Where(group => group.Id == groupId)
+                .Include(group => group.Players)
+                .Where(group => group.OwnerId == playerId || group.Players.Any(player => player.Id == playerId))
+                .FirstOrDefault() != null;
+
+        public ICollection<Thread>? GetThreads(int groupId)
+        {
+            Group? group = _unitOfWork.GroupRepo.GetTable()
+                .Where(group => group.Id == groupId)
+                .Include(group => group.Threads)
+                .ThenInclude(thread => thread.Messages)
+                .FirstOrDefault();
+
+            return group == null ? null : group.Threads;
         }
     }
 }

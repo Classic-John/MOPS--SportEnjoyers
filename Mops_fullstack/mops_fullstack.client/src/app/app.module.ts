@@ -20,7 +20,6 @@ import { AppComponent } from './app.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { ThreadsComponent } from './pages/threads/threads.component';
 import { AuthorizationService } from './shared/services/auth/authorization.service';
 import { HomeComponent } from './pages/home/home.component';
 import { SharedComponentsModule } from './shared/components/shared-components.module';
@@ -31,8 +30,7 @@ import { GroupsModule } from './pages/groups/groups.module';
     AppComponent,
     HomeComponent,
     RegisterComponent,
-    LoginComponent,
-    ThreadsComponent
+    LoginComponent
   ],
   imports: [
     BrowserModule,

@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.Models;
 using Mops_fullstack.Server.Datalayer.Service_interfaces;
+using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
 namespace Mops_fullstack.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [RequireHttps]
     public class GroupController : ControllerBase
     {
         private readonly IGroupService _groupService;
@@ -201,15 +203,32 @@ namespace Mops_fullstack.Server.Controllers
             return Ok(matches.Select(_mapper.Map<MatchDTO>));
         }
 
-        /*[HttpPut("UpdateGroup")]
-        public IActionResult UpdateGroup(GroupDTO group)
-           => _groupService.UpdateItem(MapperConvert<GroupDTO, Group>.ConvertItem(group)) ? Ok() : NotFound();
-
-        [HttpDelete("DeleteGroup/{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpGet("{id}/threads")]
+        [ProducesResponseType(typeof(ICollection<ThreadSummaryDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult DeleteGroup(int? id)
-            => _groupService.RemoveItem(_groupService.GetItem(id)) ? Ok() : NotFound();*/
+        public IActionResult GetThreads([FromRoute] int id)
+        {
+            if (HttpContext.Items["Player"] is not Player player)
+            {
+                return Unauthorized("Cannot get threads of a group because no user is logged in.");
+            }
+            if (!_groupService.IsMember(id, player.Id))
+            {
+                return Unauthorized("Cannot get threads of a group because you are not a member.");
+            }
 
+            ICollection<Thread>? threads = _groupService.GetThreads(id);
+            if (threads == null)
+            {
+                return NotFound("Cannot get threads of a not found group.");
+            }
+            return Ok(threads.OrderByDescending(thread => thread.Messages.MaxBy(message => message.DateCreated)!.DateCreated).Select(thread =>
+            {
+                ThreadSummaryDTO threadDTO = _mapper.Map<ThreadSummaryDTO>(thread);
+                threadDTO.InitialMessage = _mapper.Map<MessageDTO>(thread.Messages.First(message => message.IsInitial));
+                return threadDTO;
+            }));
+        }
     }
 }

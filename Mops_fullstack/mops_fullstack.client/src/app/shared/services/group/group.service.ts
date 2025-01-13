@@ -54,4 +54,8 @@ export class GroupService {
   getMatches(id: Number): Observable<any> {
     return this.apiService.get(`${this.route}${id}/matches`);
   }
+
+  getThreads(id: Number): Observable<any> {
+    return this.apiService.get(`${this.route}${id}/threads`);
+  }
 }

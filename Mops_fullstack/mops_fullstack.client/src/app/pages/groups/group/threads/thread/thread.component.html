@@ -1,0 +1,27 @@
+<h2 class="page-title">Thread</h2>
+<mat-expansion-panel *ngIf="thread != null && group != null">
+  <mat-expansion-panel-header>
+    <mat-panel-title>Add a new message</mat-panel-title>
+  </mat-expansion-panel-header>
+  <form [formGroup]="messageForm" id="createMessageForm" (ngSubmit)="createMessage(messageForm.getRawValue())">
+    <div class="form-field">
+      <mat-form-field>
+        <mat-label>Write message here...</mat-label>
+        <textarea matInput formControlName="text"></textarea>
+      </mat-form-field>
+    </div>
+    <button class="form-submit-button" mat-button type="submit">Add message</button>
+  </form>
+</mat-expansion-panel>
+<app-list [itemList]="thread.messages" [showPaginator]="thread.messages.length > 10" *ngIf="thread != null && group != null">
+  <ng-template let-message>
+    <div>
+      <p><b>{{message.player.name}}, {{message.player.age}}</b></p>
+      <p>{{message.text}}</p>
+      <div>
+        <button mat-button *ngIf="message.isInitial && group.isYours" (click)="deleteThread()" class="form-submit-button">Delete thread</button>
+        <button mat-button *ngIf="!message.isInitial && (message.isYours || group.isYours)" (click)="deleteMessage(message.id)" class="form-submit-button">Delete message</button>
+      </div>
+    </div>
+  </ng-template>
+</app-list>

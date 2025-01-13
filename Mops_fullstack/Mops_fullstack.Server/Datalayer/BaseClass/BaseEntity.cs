@@ -9,5 +9,9 @@ namespace Mops_fullstack.Server.Datalayer.BaseClass
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; } = default;
+
+        public DateTime DateCreated { get; set; }
+
+        public DateTime DateModified { get; set; }
     }
 }

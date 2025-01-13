@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35506.116 d17.12
+VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mops_fullstack.Server", "Mops_fullstack.Server\Mops_fullstack.Server.csproj", "{73277083-F526-4365-B261-27CF52EC4E47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mops_fullstack.Server", "Mops_fullstack.Server\Mops_fullstack.Server.csproj", "{73277083-F526-4365-B261-27CF52EC4E47}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "mops_fullstack.client", "mops_fullstack.client\mops_fullstack.client.esproj", "{BF8DEE6A-5A78-4831-84D8-9A4009EC9F1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit Tests", "Unit Tests\Unit Tests.csproj", "{E6A26FC3-A4D5-439A-9958-93C06558F2B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,8 +25,15 @@ Global
 		{BF8DEE6A-5A78-4831-84D8-9A4009EC9F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF8DEE6A-5A78-4831-84D8-9A4009EC9F1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF8DEE6A-5A78-4831-84D8-9A4009EC9F1D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E6A26FC3-A4D5-439A-9958-93C06558F2B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A26FC3-A4D5-439A-9958-93C06558F2B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A26FC3-A4D5-439A-9958-93C06558F2B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A26FC3-A4D5-439A-9958-93C06558F2B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {93B0E12A-E406-435A-8451-12CD44E12B2C}
 	EndGlobalSection
 EndGlobal

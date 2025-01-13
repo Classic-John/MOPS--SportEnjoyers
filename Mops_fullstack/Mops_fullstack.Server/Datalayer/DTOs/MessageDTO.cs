@@ -1,16 +1,38 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Mops_fullstack.Server.Datalayer.BaseClass;
-using Mops_fullstack.Server.Datalayer.IMapperConverter;
-using Mops_fullstack.Server.Datalayer.Models;
-using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
+﻿using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class MessageDTO : BaseEntity
+    public class CreateMessageDTO
     {
-        public string? Text { get; set; }
-        [Required]
-        public int AssociatedThreadId { get; set; }
-        public virtual Thread AssociatedThread { get; set; } = null!;
+        public string Text { get; set; } = null!;
+
+        public int ThreadId { get; set; }
+
+        [SwaggerIgnore]
+        public int? PlayerId { get; set; }
+
+        public CreateMessageDTO() { }
+
+        public CreateMessageDTO(string text, int playerId, int threadId)
+        {
+            Text = text;
+            ThreadId = threadId;
+            PlayerId = playerId;
+        }
+    }
+
+    public class MessageDTO
+    {
+        public int Id { get; set; }
+
+        public string Text { get; set; } = null!;
+
+        public PlayerDTO Player { get; set; } = null!;
+
+        public DateTime DateCreated { get; set; }
+
+        public bool IsInitial { get; set; }
+
+        public bool IsYours { get; set; } = false;
     }
 }

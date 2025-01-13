@@ -1,16 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Mops_fullstack.Server.Datalayer.BaseClass;
-using Mops_fullstack.Server.Datalayer.IMapperConverter;
-using Mops_fullstack.Server.Datalayer.Models;
-using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
-
+﻿
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
-    public class ThreadDTO : BaseEntity
+    public class CreateThreadDTO
     {
-        [Required]
-        public int AssociatedGroupId { get; set; }
-        public virtual Group AssociatedGroup { get; set; } = null!;
-        public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+        public int GroupId { get; set; }
+
+        public string InitialMessage { get; set; } = null!;
+    }
+
+    public class ThreadDTO
+    {
+        public int Id { get; set; }
+
+        public int GroupId { get; set; }
+
+        public ICollection<MessageDTO> Messages { get; set; } = [];
+    }
+
+    public class ThreadSummaryDTO
+    {
+        public int Id { get; set; }
+
+        public MessageDTO InitialMessage { get; set; } = null!;
     }
 }

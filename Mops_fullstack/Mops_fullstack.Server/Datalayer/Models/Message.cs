@@ -14,6 +14,9 @@ public partial class Message : BaseEntity, IMessage
     public string Text { get; set; } = null!;
 
     [Required]
+    public bool IsInitial { get; set; } = false;
+
+    [Required]
     public int ThreadId { get; set; }
 
     public Thread Thread { get; set; } = null!;

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
 import { SearchComponent } from './search/search.component';
 import { CreateComponent } from './create/create.component';
 import { ViewComponent } from './view/view.component';
@@ -20,7 +20,10 @@ const routes: Routes = [
     path: ':id',
     component: ViewComponent,
     canActivate: [intParamGuard],
-    data: { param: 'id', fallback: '/fields' }
+    data: {
+      param: 'id',
+      fallback: (_route: ActivatedRouteSnapshot, router: Router) => router.createUrlTree(['/fields'])
+    }
   },
   {
     path: '**',

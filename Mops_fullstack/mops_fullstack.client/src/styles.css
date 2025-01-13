@@ -90,3 +90,7 @@ mat-card-content {
 .page-title {
   text-align: center;
 }
+
+div {
+  word-wrap: break-word;
+}

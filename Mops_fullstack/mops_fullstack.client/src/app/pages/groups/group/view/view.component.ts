@@ -4,8 +4,6 @@ import { GroupService } from '../../../../shared/services/group/group.service';
 import { GroupJoinStatus, GroupJoinStatusType } from '../../../../shared/interfaces/requests/join-status.interface';
 import { AuthorizationService } from '../../../../shared/services/auth/authorization.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FieldService } from '../../../../shared/services/field/field.service';
-import { Field } from '../../../../shared/interfaces/fields/field.interface';
 
 @Component({
   selector: 'app-view',

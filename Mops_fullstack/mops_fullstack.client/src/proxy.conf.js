@@ -10,6 +10,8 @@ const PROXY_CONFIG = [
       "/api/group",
       "/api/field",
       "/api/match",
+      "/api/thread",
+      "/api/message"
     ],
     target,
     secure: false,
