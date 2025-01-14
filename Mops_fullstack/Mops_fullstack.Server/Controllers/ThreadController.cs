@@ -44,7 +44,15 @@ namespace Mops_fullstack.Server.Controllers
                 return Unauthorized("Cannot get a thread for a group you are not a member of.");
             }
 
-            return Ok(_mapper.Map<ThreadDTO>(thread));
+            ThreadDTO threadDTO = _mapper.Map<ThreadDTO>(thread);
+            foreach (MessageDTO messageDTO in threadDTO.Messages)
+            {
+                if (messageDTO.Player.Id == player.Id)
+                {
+                    messageDTO.IsYours = true;
+                }
+            }
+            return Ok(threadDTO);
         }
 
         [HttpPost]
