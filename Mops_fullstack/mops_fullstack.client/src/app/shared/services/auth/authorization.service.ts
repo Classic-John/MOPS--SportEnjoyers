@@ -33,12 +33,14 @@ export class AuthorizationService {
     };
 
     return this.apiService.post<LoginModel>(`${this.route}login`, player, options).pipe(
-      map((token) => {
-        if (token) {
-          localStorage.setItem(AuthorizationService.key, token);
-        }
+      map((player: LoggedPlayer) => {
+        this.setPlayer(player);
       })
     );
+  }
+
+  setPlayer(player: any) {
+    localStorage.setItem(AuthorizationService.key, player);
   }
 
   static getLoggedInPlayer(): LoggedPlayer | null {

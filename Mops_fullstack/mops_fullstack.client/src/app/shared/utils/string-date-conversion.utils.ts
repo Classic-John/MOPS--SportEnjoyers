@@ -4,7 +4,7 @@ export function stringToDate(input: string): Date | null {
     return null;
   }
 
-  return new Date(Number(parts[0]), Number(parts[1]), Number(parts[2]));
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
 }
 
 export function dateToString(input: Date): string {

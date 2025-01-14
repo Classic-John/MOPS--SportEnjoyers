@@ -39,7 +39,7 @@ namespace Mops_fullstack.Server.Core.Services
                 .Where(field => filter.Location == null || filter.Location == field.Location)
                 .Include(field => field.Matches)
                 .Where(field =>
-                    filter.Location == null ||
+                    filter.FreeOnDay == null ||
                     field.Matches.FirstOrDefault(match => filter.FreeOnDay == match.MatchDate) == null
                 );
 

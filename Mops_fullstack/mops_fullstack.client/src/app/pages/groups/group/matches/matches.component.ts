@@ -26,7 +26,6 @@ export class MatchesComponent {
 
         groupService.getMatches(groupId).subscribe({
           next: (matches: Match[]) => {
-            console.log(matches);
             this.matchList = matches
               .filter((match, _index, _array) => stringToDate(match.matchDate as string) != null)
               .sort((match_left, match_right) => {

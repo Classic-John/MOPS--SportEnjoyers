@@ -4,6 +4,7 @@ import { Player } from '../../interfaces/players/player.interface';
 import { Observable } from 'rxjs';
 import { JoinRequest } from '../../interfaces/requests/join-request.interface';
 import { Group } from '../../interfaces/groups/group.interface';
+import { UpdatePlayer } from '../../interfaces/players/update-player.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +28,9 @@ export class PlayerService {
 
   delete(): Observable<any> {
     return this.apiService.delete(`${this.route}`);
+  }
+
+  update(player: UpdatePlayer): Observable<any> {
+    return this.apiService.put<UpdatePlayer>(`${this.route}`, player);
   }
 }

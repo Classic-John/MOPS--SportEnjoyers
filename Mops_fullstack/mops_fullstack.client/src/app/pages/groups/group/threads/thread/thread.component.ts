@@ -30,7 +30,6 @@ export class ThreadComponent {
     this.route.paramMap.subscribe({
       next: (params) => {
         let id = Number(params.get('id'));
-        console.log(id);
 
         this.messageForm = formBuilder.group({
           threadId: id,

@@ -15,10 +15,9 @@ export class RequestsComponent {
     playerService.getRequests().subscribe({
       next: (requestList) => {
         this.requestList = requestList;
-        console.log(this.requestList);
       },
       error: (err) => {
-        console.log(err);
+        console.log("Error:", err);
       }
     });
   }

@@ -33,7 +33,6 @@ export class SearchComponent {
       this.groupService.getAllThatMatch(filter).subscribe({
         next: (groups) => {
           this.groupList = groups;
-          console.log(groups);
         },
         error: (err) => {
           console.log("Error: ", err);

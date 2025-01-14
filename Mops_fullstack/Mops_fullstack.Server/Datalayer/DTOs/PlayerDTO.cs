@@ -59,6 +59,17 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
         }
     }
 
+    public class UpdatePlayerDTO
+    {
+        public string? Name { get; set; }
+
+        public string? OldPassword { get; set; }
+
+        public string? Password { get; set; }
+
+        public int? Age { get; set; }
+    }
+
     public class PlayerDTO
     {
         public int Id { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BCrypt.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Mops_fullstack.Server.Datalayer.DTOs;
@@ -69,6 +70,47 @@ namespace Mops_fullstack.Server.Controllers
 
             string token = _jwtUtils.GenerateJwtToken(Player);
             return Ok(new LoggedPlayerDTO(Player, token));
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(LoggedPlayerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized), Authorize]
+        public IActionResult UpdatePlayer([FromBody] UpdatePlayerDTO updatePlayer)
+        {
+            if (HttpContext.Items["Player"] is not Player player)
+            {
+                return Unauthorized("Cannot update player data because no user is logged in.");
+            }
+
+            if (updatePlayer.OldPassword is null && updatePlayer.Password is not null)
+            {
+                return BadRequest("Cannot update player password because old password was not provided.");
+            }
+
+            if (updatePlayer.Password is not null)
+            {
+                if (!BCrypt.Net.BCrypt.EnhancedVerify(updatePlayer.OldPassword, player.Password))
+                {
+                    return Unauthorized("Cannot update player password because old password is incorrect.");
+                }
+                player.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(updatePlayer.Password);
+            }
+            if (updatePlayer.Name is not null)
+            {
+                player.Name = updatePlayer.Name;
+            }
+            if (updatePlayer.Age is int age)
+            {
+                player.Age = age;
+            }
+
+            if (!_playerService.UpdateItem(player))
+            {
+                return BadRequest("Update player failed.");
+            }
+            string token = _jwtUtils.GenerateJwtToken(player);
+            return Ok(new LoggedPlayerDTO(player, token));
         }
 
         [HttpGet("requests")]

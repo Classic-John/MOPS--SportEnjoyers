@@ -42,7 +42,6 @@ export class SearchComponent {
       fieldService.getAllThatMatch(filter).subscribe({
         next: (fields) => {
           this.fieldList = fields;
-          console.log(this.fieldList);
         },
         error: (err) => {
           console.log("Error: ", err);
