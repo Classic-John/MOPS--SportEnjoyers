@@ -2,9 +2,11 @@ using System.Drawing;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using Azure;
 using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.Equivalency;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
@@ -13,10 +15,14 @@ using Mops_fullstack.Server.Core;
 using Mops_fullstack.Server.Core.Services;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
+using Mops_fullstack.Server.Datalayer.Interfaces;
 using Mops_fullstack.Server.Datalayer.Jwt;
 using Mops_fullstack.Server.Datalayer.Models;
 using Mops_fullstack.Server.Datalayer.Service_interfaces;
 using Field = Mops_fullstack.Server.Datalayer.Models.Field;
+using Group = Mops_fullstack.Server.Datalayer.Models.Group;
+using Match = Mops_fullstack.Server.Datalayer.Models.Match;
+using Message = Mops_fullstack.Server.Datalayer.Models.Message;
 using Thread = Mops_fullstack.Server.Datalayer.Models.Thread;
 
 namespace Unit_Tests
@@ -54,8 +60,21 @@ namespace Unit_Tests
             _groupController = new(_groupService, _mapper);
             _matchController = new(_matchService, _groupService, _mapper);
             _messageController = new(_messageService, _groupService, _threadService, _mapper);
-            _playerController = new(_playerService, _jwtUtils, _mapper);
+            _playerController = new(_playerService, _groupService, _jwtUtils, _mapper);
             _threadController = new(_threadService, _groupService, _mapper);
+
+            var httpContext = A.Fake<HttpContext>();
+            var httpResponse = A.Fake<HttpResponse>();
+
+            A.CallTo(() => httpContext.Response).Returns(httpResponse);
+
+            var context = new ControllerContext(new ActionContext(httpContext, new Microsoft.AspNetCore.Routing.RouteData(), new Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor()));
+            _fieldController.ControllerContext = context;
+            _groupController.ControllerContext = context;
+            _matchController.ControllerContext = context;
+            _messageController.ControllerContext = context;
+            _playerController.ControllerContext = context;
+            _threadController.ControllerContext = context;
         }
         #region FieldController
         [Fact]
@@ -95,7 +114,7 @@ namespace Unit_Tests
             failedResult.Should().NotBeNull();
             #endregion
         }
-        /*[Fact]
+        [Fact]
         public void FieldController_GetFields_ReturnsEmpty()
         {
             #region Arrange
@@ -115,6 +134,7 @@ namespace Unit_Tests
         public void FieldController_GetField_ReturnsOk()
         {
             #region Arrange
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = A.Fake<Player>();
             int id = 1;
             var field = A.Fake<Field>();
             A.CallTo(() => _fieldService.GetItem(id)).Returns(field);
@@ -132,72 +152,52 @@ namespace Unit_Tests
         public void FieldController_GetField_ReturnsNotFound()
         {
             #region Arrange
-            Field field = null;
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = A.Fake<Player>();
+            Field? field = null;
             A.CallTo(() => _fieldService.GetItem(-1)).Returns(field);
             #endregion
             #region Act
             var result = _fieldController.GetField(-1);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>();
-            #endregion
-        }
-        [Fact] //*
-        public void FieldController_UpdateField_ReturnsOk()
-        {
-            #region Arrange
-            var field = A.Fake<Field>();
-            A.CallTo(() => _fieldService.UpdateItem(field)).Returns(true);
-            #endregion
-            #region Act
-            var result = _fieldController.UpdateField(MapperConvert<Field, FieldDTO>.ConvertItem(field));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
             #endregion
         }
         [Fact]
-        public void FieldController_UpdateField_ReturnsNotFound()
-        {
-            #region Arrange
-            Field field = null;
-            A.CallTo(() => _fieldService.UpdateItem(field)).Returns(false);
-            #endregion
-            #region Act
-            var result = _fieldController.UpdateField(_mapper.ConvertItem<Field, FieldDTO>(field));
-            #endregion
-            #region Assert
-            result.Should().NotBeNull();
-            #endregion
-        }
-        [Fact] //*
         public void FieldController_AddField_ReturnsOk()
         {
             #region Arrange
-            var field = A.Fake<Field>();
-            A.CallTo(() => _fieldService.AddItem(field)).Returns(true);
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = A.Fake<Player>();
+            var createField = A.Fake<CreateFieldDTO>();
+            var field = _mapper.Map<Field>(createField);
+            var fieldDTO = _mapper.Map<FieldDTO>(field);
+            A.CallTo(() => _fieldService.AddItem(field)).Returns(field);
             #endregion
             #region Act
-            var result = _fieldController.AddField(MapperConvert<Field, FieldDTO>.ConvertItem(field));
+            var result = _fieldController.CreateField(createField);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<OkObjectResult>()
                 .Should().NotBeNull();
+            (result as OkObjectResult)!.Value.Should().BeEquivalentTo(fieldDTO);
             #endregion
         }
         [Fact] //*
         public void FieldController_DeleteField_ReturnsOk()
         {
             #region Arrange
+            Player player = A.Fake<Player>();
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = player;
             var field = A.Fake<Field>();
             A.CallTo(() => _fieldService.RemoveItem(field)).Returns(true);
+            A.CallTo(() => _fieldService.IsOwnedBy(field.Id, player.Id)).Returns(true);
+            A.CallTo(() => _fieldService.DeleteField(field.Id)).Returns(true);
             #endregion
             #region Act
             var result = _fieldController.DeleteField(field.Id);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>().
+            result.Should().BeOfType<NoContentResult>().
                 Should().NotBeNull();
             #endregion
         }
@@ -212,30 +212,14 @@ namespace Unit_Tests
             #endregion
 
             #region Act
-            var expectedGroups = _groupController.GetGroups();
-            var finalResult = expectedGroups.Select(group => MapperConvert<GroupDTO, Group>.ConvertItem(group)).ToList();
+            var expectedGroups = _groupController.GetGroups(new GroupFilterDTO());
             #endregion
 
             #region Assert
-            finalResult.Should().BeOfType<List<Group>>()
+            expectedGroups.Should().BeOfType<OkObjectResult>()
                 .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void GroupController_GetGroups_ReturnsFailure()
-        {
-            #region Arrange
-            var groups = A.Fake<IEnumerable<Group>>();
-            A.CallTo(() => _groupService.GetItems()).Returns(groups.ToList());
-            #endregion
-
-            #region Act
-            var expectedGroups = _groupController.GetGroups();
-            var finalResult = expectedGroups.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().NotBeOfType<List<Group>>();
+            (expectedGroups as OkObjectResult)!.Value.Should().BeOfType<List<GroupSearchDTO>>()
+                .Should().NotBeNull();
             #endregion
         }
         [Fact]
@@ -246,18 +230,20 @@ namespace Unit_Tests
             #endregion
 
             #region Act
-            var expectedGroups = _groupController.GetGroups();
-            var finalResult = expectedGroups.ToList();
+            var expectedGroups = _groupController.GetGroups(new GroupFilterDTO());
             #endregion
 
             #region Assert
-            finalResult.Should().BeEmpty();
+            expectedGroups.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (expectedGroups as OkObjectResult)!.Value.Should().BeEquivalentTo(new List<GroupSearchDTO>());
             #endregion
         }
         [Fact]
         public void GroupController_GetGroup_ReturnsOk()
         {
             #region Arrange
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = null;
             int id = 1;
             var field = A.Fake<Group>();
             A.CallTo(() => _groupService.GetItem(id)).Returns(field);
@@ -275,8 +261,8 @@ namespace Unit_Tests
         public void GroupController_GetGroup_ReturnsNotFound()
         {
             #region Arrange
-            Group group = null;
-            A.CallTo(() => _groupService.GetItem(-1)).Returns(group);
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = null;
+            A.CallTo(() => _groupService.GetGroupData(-1)).Returns(null);
             #endregion
             #region Act
             var result = _groupController.GetGroup(-1);
@@ -286,46 +272,22 @@ namespace Unit_Tests
             #endregion
         }
         [Fact] //*
-        public void GroupController_UpdateGroup_ReturnsOk()
-        {
-            #region Arrange
-            var group = A.Fake<Group>();
-            A.CallTo(() => _groupService.UpdateItem(group)).Returns(true);
-            #endregion
-            #region Act
-            var result = _groupController.UpdateGroup(MapperConvert<Group, GroupDTO>.ConvertItem(group));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void GroupController_UpdateGroup_ReturnsNotFound()
-        {
-            #region Arrange
-            Group group = null;
-            A.CallTo(() => _groupService.UpdateItem(group)).Returns(false);
-            #endregion
-            #region Act
-            var result = _groupController.UpdateGroup(MapperConvert<Group, GroupDTO>.ConvertItem(group));
-            #endregion
-            #region Assert
-            result.Should().NotBeNull();
-            #endregion
-        }
-        [Fact] //*
         public void GroupController_AddGroup_ReturnsOk()
         {
             #region Arrange
-            var group = A.Fake<Group>();
-            A.CallTo(() => _groupService.AddItem(group)).Returns(true);
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = A.Fake<Player>();
+            var createGroup = A.Fake<CreateGroupDTO>();
+            var group = _mapper.Map<Group>(createGroup);
+            var groupDTO = _mapper.Map<GroupDTO>(group);
+            A.CallTo(() => _groupService.AddItem(group)).Returns(group);
             #endregion
             #region Act
-            var result = _groupController.UpdateGroup(MapperConvert<Group, GroupDTO>.ConvertItem(group));
+            var result = _groupController.AddGroup(createGroup);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
                 .Should().NotBeNull();
             #endregion
         }
@@ -333,142 +295,44 @@ namespace Unit_Tests
         public void GroupController_DeleteGroup_ReturnsOk()
         {
             #region Arrange
+            var player = A.Fake<Player>(); ;
+            _fieldController.ControllerContext.HttpContext.Items["Player"] = player;
             var group = A.Fake<Group>();
             A.CallTo(() => _groupService.RemoveItem(group)).Returns(true);
+            A.CallTo(() => _groupService.IsOwnedBy(group.Id, player.Id)).Returns(true);
+            A.CallTo(() => _groupService.DeleteGroup(group.Id)).Returns(true);
             #endregion
             #region Act
             var result = _groupController.DeleteGroup(group.Id);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>().
+            result.Should().BeOfType<NoContentResult>().
                 Should().NotBeNull();
             #endregion
         }
         #endregion
         #region MatchController
-        [Fact]
-        public void MatchController_GetMatches_ReturnsSuccess()
-        {
-            #region Arrange
-            var matches = A.Fake<IEnumerable<Match>>();
-            A.CallTo(() => _matchService.GetItems()).Returns(matches.ToList());
-            #endregion
-
-            #region Act
-            var expectedMatches = _matchController.GetMatches();
-            var finalResult = expectedMatches.Select(match => MapperConvert<MatchDTO, Match>.ConvertItem(match)).ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeOfType<List<Match>>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void MatchController_GetMatches_ReturnsFailure()
-        {
-            #region Arrange
-            var matches = A.Fake<IEnumerable<Match>>();
-            A.CallTo(() => _matchService.GetItems()).Returns(matches.ToList());
-            #endregion
-
-            #region Act
-            var expectedMatches = _matchController.GetMatches();
-            var finalResult = expectedMatches.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().NotBeOfType<List<Match>>();
-            #endregion
-        }
-        [Fact]
-        public void MatchController_GetMatches_ReturnsEmpty()
-        {
-            #region Arrange
-            A.CallTo(() => _fieldService.GetItems()).Returns(new List<Field>());
-            #endregion
-
-            #region Act
-            var expectedFields = _fieldController.GetFields();
-            var finalResult = expectedFields.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeEmpty();
-            #endregion
-        }
-        [Fact]
-        public void MatchController_GetMatch_ReturnsOk()
-        {
-            #region Arrange
-            int id = 1;
-            var match = A.Fake<Match>();
-            A.CallTo(() => _matchService.GetItem(id)).Returns(match);
-            #endregion
-            #region Act
-            var result = _matchController.GetMatch(id);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<OkObjectResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-
-        [Fact]
-        public void MatchController_GetMatch_ReturnsNotFound()
-        {
-            #region Arrange
-            Match match = null;
-            A.CallTo(() => _matchService.GetItem(-1)).Returns(match);
-            #endregion
-            #region Act
-            var result = _matchController.GetMatch(-1);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>();
-            #endregion
-        }
-        [Fact] //*
-        public void MatchController_UpdateMatch_ReturnsOk()
-        {
-            #region Arrange
-            var match = A.Fake<Match>();
-            A.CallTo(() => _matchService.UpdateItem(match)).Returns(true);
-            #endregion
-            #region Act
-            var result = _matchController.UpdateMatch(MapperConvert<Match, MatchDTO>.ConvertItem(match));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void MatchController_UpdateMatch_ReturnsNotFound()
-        {
-            #region Arrange
-            Match match = null;
-            A.CallTo(() => _matchService.UpdateItem(match)).Returns(false);
-            #endregion
-            #region Act
-            var result = _matchController.UpdateMatch(MapperConvert<Match, MatchDTO>.ConvertItem(match));
-            #endregion
-            #region Assert
-            result.Should().NotBeNull();
-            #endregion
-        }
         [Fact] //*
         public void MatchController_AddMatch_ReturnsOk()
         {
             #region Arrange
-            var match = A.Fake<Match>();
-            A.CallTo(() => _matchService.AddItem(match)).Returns(true);
+            var player = A.Fake<Player>();
+            _matchController.ControllerContext.HttpContext.Items["Player"] = player;
+            var createMatch = A.Fake<CreateMatchDTO>();
+            var match = _mapper.Map<Match>(createMatch);
+            var matchDTO = _mapper.Map<MatchDTO>(match);
+            A.CallTo(() => _matchService.AddItem(match)).Returns(match);
+            A.CallTo(() => _matchService.IsValidDate(createMatch.MatchDate)).Returns(true);
+            A.CallTo(() => _matchService.AlreadyReserved(match.FieldId, match.MatchDate)).Returns(false);
+            A.CallTo(() => _groupService.IsOwnedBy(match.GroupId, player.Id)).Returns(true);
             #endregion
             #region Act
-            var result = _matchController.AddMatch(MapperConvert<Match, MatchDTO>.ConvertItem(match));
+            var result = _matchController.AddMatch(createMatch);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
                 .Should().NotBeNull();
             #endregion
         }
@@ -476,142 +340,43 @@ namespace Unit_Tests
         public void MatchController_DeleteMatch_ReturnsOk()
         {
             #region Arrange
+            var player = A.Fake<Player>();
+            _matchController.ControllerContext.HttpContext.Items["Player"] = player;
             var match = A.Fake<Match>();
+            A.CallTo(() => _matchService.GetOwnedBy(match.Id, player.Id)).Returns(match);
             A.CallTo(() => _matchService.RemoveItem(match)).Returns(true);
             #endregion
             #region Act
             var result = _matchController.DeleteMatch(match.Id);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>().
+            result.Should().BeOfType<NoContentResult>().
                 Should().NotBeNull();
             #endregion
         }
         #endregion
         #region MessageController
-        [Fact]
-        public void MessageController_GetMessages_ReturnsSuccess()
-        {
-            #region Arrange
-            var messages = A.Fake<IEnumerable<Message>>();
-            A.CallTo(() => _messageService.GetItems()).Returns(messages.ToList());
-            #endregion
-
-            #region Act
-            var expectedMessages = _messageController.GetMessages();
-            var finalResult = expectedMessages.Select(message => MapperConvert<MessageDTO, Message>.ConvertItem(message)).ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeOfType<List<Message>>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void MessageController_GetMessages_ReturnsFailure()
-        {
-            #region Arrange
-            var messages = A.Fake<IEnumerable<Message>>();
-            A.CallTo(() => _messageService.GetItems()).Returns(messages.ToList());
-            #endregion
-
-            #region Act
-            var expectedMessages = _messageController.GetMessages();
-            var finalResult = expectedMessages.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().NotBeOfType<List<Message>>();
-            #endregion
-        }
-        [Fact]
-        public void MessageController_GetMessages_ReturnsEmpty()
-        {
-            #region Arrange
-            A.CallTo(() => _messageService.GetItems()).Returns(new List<Message>());
-            #endregion
-
-            #region Act
-            var expectedMessage = _messageController.GetMessages();
-            var finalResult = expectedMessage.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeEmpty();
-            #endregion
-        }
-        [Fact]
-        public void MessageController_GetMessage_ReturnsOk()
-        {
-            #region Arrange
-            int id = 1;
-            var message = A.Fake<Message>();
-            A.CallTo(() => _messageService.GetItem(id)).Returns(message);
-            #endregion
-            #region Act
-            var result = _messageController.GetMessages(id);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<OkObjectResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-
-        [Fact]
-        public void MessageController_GetMessage_ReturnsNotFound()
-        {
-            #region Arrange
-            Message message = null;
-            A.CallTo(() => _messageService.GetItem(-1)).Returns(message);
-            #endregion
-            #region Act
-            var result = _messageController.GetMessages(-1);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>();
-            #endregion
-        }
-        [Fact] //*
-        public void MessageController_UpdateMessage_ReturnsOk()
-        {
-            #region Arrange
-            var message = A.Fake<Message>();
-            A.CallTo(() => _messageService.UpdateItem(message)).Returns(true);
-            #endregion
-            #region Act
-            var result = _messageController.UpdateMessage(MapperConvert<Message, MessageDTO>.ConvertItem(message));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void MessageController_UpdateMessage_ReturnsNotFound()
-        {
-            #region Arrange
-            Message message = null;
-            A.CallTo(() => _messageService.UpdateItem(message)).Returns(false);
-            #endregion
-            #region Act
-            var result = _messageController.UpdateMessage(MapperConvert<Message, MessageDTO>.ConvertItem(message));
-            #endregion
-            #region Assert
-            result.Should().NotBeNull();
-            #endregion
-        }
         [Fact] //*
         public void MessageController_AddMessage_ReturnsOk()
         {
             #region Arrange
-            var message = A.Fake<Message>();
-            A.CallTo(() => _messageService.AddItem(message)).Returns(true);
+            var player = A.Fake<Player>();
+            _messageController.ControllerContext.HttpContext.Items["Player"] = player;
+            var createMessage = A.Fake<CreateMessageDTO>();
+            var thread = A.Fake<Thread>();
+            var message = _mapper.Map<Message>(createMessage);
+            var messageDTO = _mapper.Map<MessageDTO>(message);
+            A.CallTo(() => _messageService.AddItem(message)).Returns(message);
+            A.CallTo(() => _threadService.GetItem(createMessage.ThreadId)).Returns(thread);
+            A.CallTo(() => _groupService.IsMember(thread.GroupId, player.Id)).Returns(true);
             #endregion
             #region Act
-            var result = _messageController.AddMessage(MapperConvert<Message, MessageDTO>.ConvertItem(message));
+            var result = _messageController.CreateMessage(createMessage);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
                 .Should().NotBeNull();
             #endregion
         }
@@ -619,157 +384,19 @@ namespace Unit_Tests
         public void MessageController_DeleteMessage_ReturnsOk()
         {
             #region Arrange
+            var player = A.Fake<Player>();
+            _messageController.ControllerContext.HttpContext.Items["Player"] = player;
             var message = A.Fake<Message>();
+            message.IsInitial = false;
+            A.CallTo(() => _messageService.GetItem(message.Id)).Returns(message);
             A.CallTo(() => _messageService.RemoveItem(message)).Returns(true);
+            A.CallTo(() => _messageService.IsOwnedBy(message.Id, player.Id)).Returns(true);
             #endregion
             #region Act
             var result = _messageController.DeleteMessage(message.Id);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>().
-                Should().NotBeNull();
-            #endregion
-        }
-        #endregion
-        #region OwnerController
-        [Fact]
-        public void OwnerController_GetOwners_ReturnsSuccess()
-        {
-            #region Arrange
-            var owners = A.Fake<IEnumerable<Owner>>();
-            A.CallTo(() => _ownerService.GetItems()).Returns(owners.ToList());
-            #endregion
-
-            #region Act
-            var expectedOwners = _ownerController.GetOwners();
-            var finalResult = expectedOwners.Select(owner => MapperConvert<OwnerDTO, Owner>.ConvertItem(owner)).ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeOfType<List<Owner>>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void OwnerController_GetOwners_ReturnsFailure()
-        {
-            #region Arrange
-            var owners = A.Fake<IEnumerable<Owner>>();
-            A.CallTo(() => _ownerService.GetItems()).Returns(owners.ToList());
-            #endregion
-
-            #region Act
-            var expectedOwners = _ownerController.GetOwners();
-            var finalResult = expectedOwners.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().NotBeOfType<List<Owner>>();
-            #endregion
-        }
-        [Fact]
-        public void OwnerController_GetOwners_ReturnsEmpty()
-        {
-            #region Arrange
-            A.CallTo(() => _ownerService.GetItems()).Returns(new List<Owner>());
-            #endregion
-
-            #region Act
-            var expectedOwners = _ownerController.GetOwners();
-            var finalResult = expectedOwners.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeEmpty();
-            #endregion
-        }
-        [Fact]
-        public void OwnersController_GetOwner_ReturnsOk()
-        {
-            #region Arrange
-            int id = 1;
-            var owner = A.Fake<Owner>();
-            A.CallTo(() => _ownerService.GetItem(id)).Returns(owner);
-            #endregion
-            #region Act
-            var result = _ownerController.GetOwner(id);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<OkObjectResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-
-        [Fact]
-        public void OwnerController_GetOwner_ReturnsNotFound()
-        {
-            #region Arrange
-            Owner owner = null;
-            A.CallTo(() => _ownerService.GetItem(-1)).Returns(owner);
-            #endregion
-            #region Act
-            var result = _ownerController.GetOwner(-1);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>();
-            #endregion
-        }
-        [Fact] //*
-        public void OwnerController_UpdateOwner_ReturnsOk()
-        {
-            #region Arrange
-            var owner = A.Fake<Owner>();
-            A.CallTo(() => _ownerService.UpdateItem(owner)).Returns(true);
-            #endregion
-            #region Act
-            var result = _ownerController.UpdateOwner(MapperConvert<Owner, OwnerDTO>.ConvertItem(owner));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void OwnerController_UpdateOwner_ReturnsNotFound()
-        {
-            #region Arrange
-            Owner owner = null;
-            A.CallTo(() => _ownerService.UpdateItem(owner)).Returns(false);
-            #endregion
-            #region Act
-            var result = _ownerController.UpdateOwner(MapperConvert<Owner, OwnerDTO>.ConvertItem(owner));
-            #endregion
-            #region Assert
-            result.Should().NotBeNull();
-            #endregion
-        }
-        [Fact] //*
-        public void OwnerController_AddOwner_ReturnsOk()
-        {
-            #region Arrange
-            var owner = A.Fake<Owner>();
-            A.CallTo(() => _ownerService.AddItem(owner)).Returns(true);
-            #endregion
-            #region Act
-            var result = _ownerController.AddOwner(MapperConvert<Owner, OwnerDTO>.ConvertItem(owner));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact] //*
-        public void OwnerController_DeleteOwner_ReturnsOk()
-        {
-            #region Arrange
-            var owner = A.Fake<Owner>();
-            A.CallTo(() => _ownerService.RemoveItem(owner)).Returns(true);
-            #endregion
-            #region Act
-            var result = _ownerController.DeleteOwner(owner.Id);
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>().
+            result.Should().BeOfType<NoContentResult>().
                 Should().NotBeNull();
             #endregion
         }
@@ -784,32 +411,15 @@ namespace Unit_Tests
             #endregion
 
             #region Act
-            var expectedPlayers = _playerController.GetPlayers();
-            var finalResult = expectedPlayers.Select(player => MapperConvert<PlayerDTO, Player>.ConvertItem(player)).ToList();
+            List<PlayerDTO>? expectedPlayers = _playerController.GetPlayers().ToList();
             #endregion
 
             #region Assert
-            finalResult.Should().BeOfType<List<Player>>()
+            expectedPlayers.Should().BeOfType<List<PlayerDTO>>()
                 .Should().NotBeNull();
             #endregion
         }
-        [Fact]
-        public void PlayerController_GetPlayers_ReturnsFailure()
-        {
-            #region Arrange
-            var players = A.Fake<IEnumerable<Player>>();
-            A.CallTo(() => _playerService.GetItems()).Returns(players.ToList());
-            #endregion
-
-            #region Act
-            var expectedPlayers = _playerController.GetPlayers();
-            var finalResult = expectedPlayers.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().NotBeOfType<List<Player>>();
-            #endregion
-        }
+        
         [Fact]
         public void PlayerController_GetPlayers_ReturnsEmpty()
         {
@@ -832,13 +442,15 @@ namespace Unit_Tests
             #region Arrange
             int id = 1;
             var player = A.Fake<Player>();
-            A.CallTo(() => _playerService.GetItem(id)).Returns(player);
+            var playerDTO = _mapper.Map<PlayerDTO>(player);
             #endregion
             #region Act
             var result = _playerController.GetPlayer(id);
             #endregion
             #region Assert
             result.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
                 .Should().NotBeNull();
             #endregion
         }
@@ -847,8 +459,7 @@ namespace Unit_Tests
         public void PlayerController_GetPlayer_ReturnsNotFound()
         {
             #region Arrange
-            Player player = null;
-            A.CallTo(() => _playerService.GetItem(-1)).Returns(player);
+            A.CallTo(() => _playerService.GetItem(-1)).Returns(null);
             #endregion
             #region Act
             var result = _playerController.GetPlayer(-1);
@@ -862,42 +473,54 @@ namespace Unit_Tests
         {
             #region Arrange
             var player = A.Fake<Player>();
+            var loggedPlayer = new LoggedPlayerDTO(player, "MyToken");
+            var updatePlayer = A.Fake<UpdatePlayerDTO>();
+            _playerController.ControllerContext.HttpContext.Items["Player"] = player;
             A.CallTo(() => _playerService.UpdateItem(player)).Returns(true);
+            A.CallTo(() => _jwtUtils.GenerateJwtToken(player)).Returns("MyToken");
             #endregion
             #region Act
-            var result = _playerController.UpdatePlayer(MapperConvert<Player, PlayerDTO>.ConvertItem(player));
+            var result = _playerController.UpdatePlayer(updatePlayer);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<OkObjectResult>()
                 .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
+                .Should().BeOfType<LoggedPlayerDTO>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
+                .Should().BeEquivalentTo(loggedPlayer);
             #endregion
         }
         [Fact]
-        public void PlayerController_UpdatePlayer_ReturnsNotFound()
+        public void PlayerController_UpdatePlayer_ReturnsUnauthorized()
         {
             #region Arrange
-            Player player = null;
-            A.CallTo(() => _playerService.UpdateItem(player)).Returns(false);
+            _playerController.ControllerContext.HttpContext.Items["Player"] = null;
             #endregion
             #region Act
-            var result = _playerController.UpdatePlayer(MapperConvert<Player, PlayerDTO>.ConvertItem(player));
+            var result = _playerController.UpdatePlayer(new UpdatePlayerDTO());
             #endregion
             #region Assert
-            result.Should().NotBeNull();
+            result
+                .Should().BeOfType<UnauthorizedObjectResult>()
+                .Should().NotBeNull();
             #endregion
         }
         [Fact] //*
-        public void PlayerController_AddPlayer_ReturnsOk()
+        public void PlayerController_RegisterPlayer_ReturnsOk()
         {
             #region Arrange
             var player = A.Fake<Player>();
-            A.CallTo(() => _playerService.AddItem(player)).Returns(true);
+            var registerPlayer = A.Fake<PlayerRegisterDTO>();
+            registerPlayer.Password = "523rtfdsd";
+            A.CallTo(() => _playerService.AddItem(player)).Returns(player);
             #endregion
             #region Act
-            var result = _playerController.AddPlayer(MapperConvert<Player, PlayerDTO>.ConvertItem(player));
+            var result = _playerController.RegisterPlayer(registerPlayer);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<CreatedResult>()
                 .Should().NotBeNull();
             #endregion
         }
@@ -906,82 +529,36 @@ namespace Unit_Tests
         {
             #region Arrange
             var player = A.Fake<Player>();
+            _playerController.ControllerContext.HttpContext.Items["Player"] = player;
             A.CallTo(() => _playerService.RemoveItem(player)).Returns(true);
             #endregion
             #region Act
-            var result = _playerController.DeletePlayer(player.Id);
+            var result = _playerController.DeletePlayer();
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>().
+            result.Should().BeOfType<NoContentResult>().
                 Should().NotBeNull();
             #endregion
         }
         #endregion
         #region ThreadController
         [Fact]
-        public void ThreadController_GetThreads_ReturnsSuccess()
-        {
-            #region Arrange
-            var threads = A.Fake<IEnumerable<Thread>>();
-            A.CallTo(() => _threadService.GetItems()).Returns(threads.ToList());
-            #endregion
-
-            #region Act
-            var expectedThreads = _threadController.GetThreads();
-            var finalResult = expectedThreads.Select(thread => MapperConvert<ThreadDTO, Thread>.ConvertItem(thread)).ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeOfType<List<Thread>>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void ThreadController_GetThreads_ReturnsFailure()
-        {
-            #region Arrange
-            var threads = A.Fake<IEnumerable<Thread>>();
-            A.CallTo(() => _threadService.GetItems()).Returns(threads.ToList());
-            #endregion
-
-            #region Act
-            var expectedThread = _threadController.GetThreads();
-            var finalResult = expectedThread.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().NotBeOfType<List<Thread>>();
-            #endregion
-        }
-        [Fact]
-        public void ThreadController_GetThreads_ReturnsEmpty()
-        {
-            #region Arrange
-            A.CallTo(() => _threadService.GetItems()).Returns(new List<Thread>());
-            #endregion
-
-            #region Act
-            var expectedThreads = _threadController.GetThreads();
-            var finalResult = expectedThreads.ToList();
-            #endregion
-
-            #region Assert
-            finalResult.Should().BeEmpty();
-            #endregion
-        }
-        [Fact]
         public void ThreadController_GetThread_ReturnsOk()
         {
             #region Arrange
-            int id = 1;
             var thread = A.Fake<Thread>();
-            A.CallTo(() => _threadService.GetItem(id)).Returns(thread);
+            var player = A.Fake<Player>();
+            _threadController.ControllerContext.HttpContext.Items["Player"] = player;
+            A.CallTo(() => _threadService.GetWithMessages(thread.Id)).Returns(thread);
+            A.CallTo(() => _groupService.IsMember(thread.GroupId, player.Id)).Returns(true);
             #endregion
             #region Act
-            var result = _threadController.GetThread(id);
+            var result = _threadController.GetThread(thread.Id);
             #endregion
             #region Assert
             result.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
                 .Should().NotBeNull();
             #endregion
         }
@@ -990,57 +567,34 @@ namespace Unit_Tests
         public void ThreadController_GetThread_ReturnsNotFound()
         {
             #region Arrange
-            Thread thread = null;
-            A.CallTo(() => _threadService.GetItem(-1)).Returns(thread);
+            _threadController.ControllerContext.HttpContext.Items["Player"] = A.Fake<Player>();
+            A.CallTo(() => _threadService.GetWithMessages(-1)).Returns(null);
             #endregion
             #region Act
             var result = _threadController.GetThread(-1);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>();
-            #endregion
-        }
-        [Fact] //*
-        public void ThreadController_UpdateThread_ReturnsOk()
-        {
-            #region Arrange
-            var thread = A.Fake<Thread>();
-            A.CallTo(() => _threadService.UpdateItem(thread)).Returns(true);
-            #endregion
-            #region Act
-            var result = _threadController.UpdateThread(MapperConvert<Thread, ThreadDTO>.ConvertItem(thread));
-            #endregion
-            #region Assert
-            result.Should().BeOfType<NotFoundResult>()
-                .Should().NotBeNull();
-            #endregion
-        }
-        [Fact]
-        public void ThreadController_UpdateThread_ReturnsNotFound()
-        {
-            #region Arrange
-            Thread thread = null;
-            A.CallTo(() => _threadService.UpdateItem(thread)).Returns(false);
-            #endregion
-            #region Act
-            var result = _threadController.UpdateThread(MapperConvert<Thread, ThreadDTO>.ConvertItem(thread));
-            #endregion
-            #region Assert
-            result.Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
             #endregion
         }
         [Fact] //*
         public void ThreadController_AddThread_ReturnsOk()
         {
             #region Arrange
-            var thread = A.Fake<Thread>();
-            A.CallTo(() => _threadService.AddItem(thread)).Returns(true);
+            var player = A.Fake<Player>();
+            var createThread = A.Fake<CreateThreadDTO>();
+            var thread = _mapper.Map<Thread>(createThread);
+            _threadController.ControllerContext.HttpContext.Items["Player"] = player;
+            A.CallTo(() => _threadService.AddItem(thread)).Returns(thread);
+            A.CallTo(() => _groupService.IsMember(thread.GroupId, player.Id)).Returns(true);
             #endregion
             #region Act
-            var result = _threadController.AddThread(MapperConvert<Thread, ThreadDTO>.ConvertItem(thread));
+            var result = _threadController.CreateThread(createThread);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>()
+            result.Should().BeOfType<OkObjectResult>()
+                .Should().NotBeNull();
+            (result as OkObjectResult)!.Value
                 .Should().NotBeNull();
             #endregion
         }
@@ -1048,17 +602,20 @@ namespace Unit_Tests
         public void ThreadController_DeleteThread_ReturnsOk()
         {
             #region Arrange
+            var player = A.Fake<Player>();
             var thread = A.Fake<Thread>();
+            _threadController.ControllerContext.HttpContext.Items["Player"] = player;
             A.CallTo(() => _threadService.RemoveItem(thread)).Returns(true);
+            A.CallTo(() => _groupService.IsOwnedBy(thread.GroupId, player.Id)).Returns(true);
             #endregion
             #region Act
             var result = _threadController.DeleteThread(thread.Id);
             #endregion
             #region Assert
-            result.Should().BeOfType<NotFoundResult>().
+            result.Should().BeOfType<NoContentResult>().
                 Should().NotBeNull();
             #endregion
-        }*/
+        }
         #endregion
     }
 }
