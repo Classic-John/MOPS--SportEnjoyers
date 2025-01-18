@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,13 +25,15 @@ import { AuthorizationService } from './shared/services/auth/authorization.servi
 import { HomeComponent } from './pages/home/home.component';
 import { SharedComponentsModule } from './shared/components/shared-components.module';
 import { GroupsModule } from './pages/groups/groups.module';
+import { VerifyComponent } from './pages/auth/verify/verify.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    VerifyComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +52,7 @@ import { GroupsModule } from './pages/groups/groups.module';
     MatDialogModule,
     MatIconModule,
     MatRadioModule,
+    MatProgressSpinnerModule,
     SharedComponentsModule,
   ],
   providers: [

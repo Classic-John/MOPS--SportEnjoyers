@@ -5,6 +5,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { LoginModel } from '../../interfaces/players/login.interface';
 import { LoggedPlayer } from '../../interfaces/players/logged-player.interface';
 import { RegisterModel } from '../../interfaces/players/register.interface';
+import { VerifyEmail } from '../../interfaces/players/verify.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,10 @@ export class AuthorizationService {
 
   register(player: RegisterModel) {
     return this.apiService.post<RegisterModel>(`${this.route}`, player);
+  }
+
+  verify(verifyEmail: VerifyEmail) {
+    return this.apiService.put<VerifyEmail>(`${this.route}verify`, verifyEmail);
   }
 
   static logout() {

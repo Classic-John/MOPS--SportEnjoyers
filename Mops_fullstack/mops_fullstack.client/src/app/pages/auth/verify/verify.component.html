@@ -1,0 +1,15 @@
+<div class="container">
+  <div *ngIf="accepted === null">
+    <h2>Pending account verification...</h2>
+    <h3>Please do not close this window...</h3>
+  </div>
+  <div *ngIf="accepted === true">
+    <h2>Your account has been successfully verified!</h2>
+    <h3>Redirecting soon...</h3>
+  </div>
+  <div *ngIf="accepted === false">
+    <h2>Verification code is invalid!</h2>
+    <h3>Redirecting soon...</h3>
+  </div>
+  <mat-spinner></mat-spinner>
+</div>

@@ -100,4 +100,9 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
 
         public bool Accepted { get; set; }
     }
+
+    public class VerifyEmailDTO
+    {
+        public string VerificationCode { get; set; } = null!;
+    }
 }

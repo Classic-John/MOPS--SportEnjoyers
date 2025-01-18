@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Mops_fullstack.Server.Controllers;
 using Mops_fullstack.Server.Core;
+using Mops_fullstack.Server.Core.Mail;
 using Mops_fullstack.Server.Core.Services;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
@@ -39,6 +40,7 @@ namespace Unit_Tests
         private IThreadService _threadService;
         private IMapper _mapper;
         private IJwtUtils _jwtUtils;
+        private IMailUtil _mailUtil;
         private FieldController _fieldController;
         private GroupController _groupController;
         private MatchController _matchController;
@@ -56,11 +58,12 @@ namespace Unit_Tests
             _threadService = A.Fake<IThreadService>();
             _mapper = A.Fake<IMapper>();
             _jwtUtils = A.Fake<IJwtUtils>();
+            _mailUtil = A.Fake<IMailUtil>();
             _fieldController = new(_fieldService, _mapper);
             _groupController = new(_groupService, _mapper);
             _matchController = new(_matchService, _groupService, _mapper);
             _messageController = new(_messageService, _groupService, _threadService, _mapper);
-            _playerController = new(_playerService, _groupService, _jwtUtils, _mapper);
+            _playerController = new(_playerService, _groupService, _jwtUtils, _mailUtil, _mapper);
             _threadController = new(_threadService, _groupService, _mapper);
 
             var httpContext = A.Fake<HttpContext>();

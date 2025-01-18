@@ -12,7 +12,7 @@ using Mops_fullstack.Server.Datalayer.Database;
 namespace Mops_fullstack.Server.Migrations
 {
     [DbContext(typeof(SportEnjoyersDatabaseContext))]
-    [Migration("20250113221145_InitialVersion")]
+    [Migration("20250118124507_InitialVersion")]
     partial class InitialVersion
     {
         /// <inheritdoc />
@@ -212,6 +212,13 @@ namespace Mops_fullstack.Server.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerificationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

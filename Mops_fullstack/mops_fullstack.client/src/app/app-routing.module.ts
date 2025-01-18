@@ -5,6 +5,7 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { unloggedGuard } from './shared/guards/unlogged/unlogged.guard';
 import { loggedGuard } from './shared/guards/logged/logged.guard';
+import { VerifyComponent } from './pages/auth/verify/verify.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,11 @@ const routes: Routes = [
     path: 'register',
     canActivate: [unloggedGuard],
     component: RegisterComponent
+  },
+  {
+    path: 'verify',
+    canActivate: [unloggedGuard],
+    component: VerifyComponent
   },
   {
     path: 'fields',

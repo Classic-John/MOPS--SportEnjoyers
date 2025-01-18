@@ -24,7 +24,7 @@ namespace Mops_fullstack.Server.Core.Services
             => GetItems().FirstOrDefault(player => player.Id==id);
 
         public Player? GetPlayerWithEmail(string Email)
-            => GetItems().FirstOrDefault(player => player.Email == Email);
+            => GetItems().FirstOrDefault(player => player.Email == Email && player.Verified);
 
         public List<Player> GetItems()
             => _unitOfWork.PlayerRepo.GetAllItems();
@@ -34,6 +34,11 @@ namespace Mops_fullstack.Server.Core.Services
 
         public bool UpdateItem(Player entity)
             => _unitOfWork.PlayerRepo.Update(entity);
+
+        public Player? GetUnverified(string verificationCode)
+            => _unitOfWork.PlayerRepo.GetTable()
+                .Where(player => !player.Verified && player.VerificationCode == verificationCode)
+                .FirstOrDefault();
 
         public Player GetWithJoinRequests(int id)
             => _unitOfWork.PlayerRepo.GetTable()

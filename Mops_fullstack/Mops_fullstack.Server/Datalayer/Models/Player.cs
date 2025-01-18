@@ -18,6 +18,10 @@ public partial class Player :BaseEntity, IPlayer
     [Required]
     public string Password { get; set; } = null!;
 
+    public string VerificationCode { get; set; } = "";
+
+    public bool Verified { get; set; } = false;
+
     // public int? GoogleId { get; set; }
     // public int? FacebookId { get; set; }
     // public bool IsOrganizer { get; set; }

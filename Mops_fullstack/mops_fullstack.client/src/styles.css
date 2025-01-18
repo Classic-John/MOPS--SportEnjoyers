@@ -13,7 +13,7 @@
 }
 
 .container {
-  margin: 8px;
+  margin: 20px;
   height: 100%;
   flex-grow: 1;
   display: flex;

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BCrypt.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Mops_fullstack.Server.Core.Mail;
 using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.Jwt;
 using Mops_fullstack.Server.Datalayer.Models;
@@ -16,13 +16,15 @@ namespace Mops_fullstack.Server.Controllers
         private readonly IPlayerService _playerService;
         private readonly IGroupService _groupService;
         private readonly IJwtUtils _jwtUtils;
+        private readonly IMailUtil _mailUtil;
         private readonly IMapper _mapper;
 
-        public PlayerController(IPlayerService playerService, IGroupService groupService, IJwtUtils jwtUtils, IMapper mapper)
+        public PlayerController(IPlayerService playerService, IGroupService groupService, IJwtUtils jwtUtils, IMailUtil mailUtil, IMapper mapper)
         {
             _playerService = playerService;
             _groupService = groupService;
             _jwtUtils = jwtUtils;
+            _mailUtil = mailUtil;
             _mapper = mapper;
         }
 
@@ -44,13 +46,44 @@ namespace Mops_fullstack.Server.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult RegisterPlayer([FromBody]PlayerRegisterDTO player)
+        public IActionResult RegisterPlayer([FromBody] PlayerRegisterDTO player)
         {
             player.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(player.Password);
-            return
-                _playerService.AddItem(_mapper.Map<Player>(player)) != null
-                    ? Created()
-                    : BadRequest("Failed to add player to database.");
+            Player newPlayer = _mapper.Map<Player>(player);
+            newPlayer.VerificationCode = Guid.NewGuid().ToString();
+
+            if (_playerService.AddItem(newPlayer) != null)
+            {
+                _mailUtil.SendVerificationMail(newPlayer);
+                return Created();
+            }
+            else
+            {
+                return BadRequest("Failed to add player to database.");
+            }
+        }
+
+        [HttpPut("verify")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult VerifyEmail([FromBody] VerifyEmailDTO verification)
+        {
+            if (!Guid.TryParse(verification.VerificationCode, out _))
+            {
+                return BadRequest("Bad verification code format.");
+            }
+            if (_playerService.GetUnverified(verification.VerificationCode) is not Player player)
+            {
+                return NotFound("No unverified player with that verification code was found.");
+            }
+
+            player.Verified = true;
+            if (!_playerService.UpdateItem(player))
+            {
+                return BadRequest();
+            }
+            return NoContent();
         }
 
         [HttpPost("login")]
