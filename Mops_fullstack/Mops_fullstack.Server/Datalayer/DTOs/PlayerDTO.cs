@@ -3,6 +3,7 @@ using Microsoft.Identity.Client;
 using Mops_fullstack.Server.Datalayer.BaseClass;
 using Mops_fullstack.Server.Datalayer.IMapperConverter;
 using Mops_fullstack.Server.Datalayer.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mops_fullstack.Server.Datalayer.DTOs
 {
@@ -29,6 +30,17 @@ namespace Mops_fullstack.Server.Datalayer.DTOs
         public string Password { get; set; } = null!;
 
         public int Age { get; set; }
+    }
+
+    public class GoogleAuthDTO
+    {
+        public string Key { get; set; } = null!;
+
+        [SwaggerIgnore]
+        public string? Email { get; set; }
+
+        [SwaggerIgnore]
+        public string? Name { get; set; }
     }
 
     public class PlayerLoginDTO

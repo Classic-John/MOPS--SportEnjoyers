@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@abacritt/angularx-social-login": "^2.3.0",
     "@angular/animations": "^18.2.0",
     "@angular/cdk": "^17.0.0",
     "@angular/common": "^18.2.0",
@@ -24,6 +25,7 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@auth0/angular-jwt": "^5.2.0",
+    "@types/google.accounts": "^0.0.15",
     "angular-jwt": "github:auth0/angular-jwt",
     "jest-editor-support": "*",
     "run-script-os": "*",

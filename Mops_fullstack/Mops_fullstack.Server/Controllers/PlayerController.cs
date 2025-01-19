@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Mops_fullstack.Server.Core.Mail;
@@ -6,6 +7,7 @@ using Mops_fullstack.Server.Datalayer.DTOs;
 using Mops_fullstack.Server.Datalayer.Jwt;
 using Mops_fullstack.Server.Datalayer.Models;
 using Mops_fullstack.Server.Datalayer.Service_interfaces;
+using Newtonsoft.Json;
 
 namespace Mops_fullstack.Server.Controllers
 {
@@ -45,12 +47,30 @@ namespace Mops_fullstack.Server.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult RegisterPlayer([FromBody] PlayerRegisterDTO player)
         {
             player.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(player.Password);
+            Player? playerExists = _playerService.GetPlayerWithEmail(player.Email);
+            
+            if (playerExists is not null)
+            {
+                if (playerExists.Password is not null)
+                {
+                    return BadRequest("Cannot register player because it already exists!");
+                }
+
+                playerExists.Password = player.Password;
+                playerExists.Verified = true;
+                return _playerService.UpdateItem(playerExists) ?
+                    Created() :
+                    BadRequest("Failed to add player to the database");
+            }
+
             Player newPlayer = _mapper.Map<Player>(player);
             newPlayer.VerificationCode = Guid.NewGuid().ToString();
+            newPlayer.Verified = false;
 
             if (_playerService.AddItem(newPlayer) != null)
             {
@@ -89,20 +109,72 @@ namespace Mops_fullstack.Server.Controllers
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoggedPlayerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult LoginPlayer([FromBody]PlayerLoginDTO PlayerDTO)
+        public IActionResult LoginPlayer([FromBody] PlayerLoginDTO PlayerDTO)
         {
             if (_playerService.GetPlayerWithEmail(PlayerDTO.Email) is not Player Player)
             {
                 return NotFound("No user with given credentials found.");
             }
 
-            if (!BCrypt.Net.BCrypt.EnhancedVerify(PlayerDTO.Password, Player.Password))
+            if (Player.Password is null || !BCrypt.Net.BCrypt.EnhancedVerify(PlayerDTO.Password, Player.Password))
             {
                 return NotFound("No user with given credentials found.");
             }
 
             string token = _jwtUtils.GenerateJwtToken(Player);
             return Ok(new LoggedPlayerDTO(Player, token));
+        }
+
+        [HttpPut("googleAuth")]
+        [ProducesResponseType(typeof(LoggedPlayerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GoogleAuthPlayer([FromBody] GoogleAuthDTO playerRegister)
+        {
+            try
+            {
+                GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(playerRegister.Key);
+                playerRegister.Email = payload.Email;
+                playerRegister.Name = payload.Name;
+            }
+            catch
+            {
+                return BadRequest("Cannot authenticate player with google because the key is invalid.");
+            }
+
+            Player? player = _playerService.GetPlayerWithEmail(playerRegister.Email);
+            if (player is not null)
+            {
+                if (!player.Verified)
+                {
+                    player.Verified = true;
+                    if (_playerService.UpdateItem(player))
+                    {
+                        string token = _jwtUtils.GenerateJwtToken(player);
+                        return Ok(new LoggedPlayerDTO(player, token));
+                    }
+                    return BadRequest("Could not authenticate player with google.");
+                }
+                else
+                {
+                    string token = _jwtUtils.GenerateJwtToken(player);
+                    return Ok(new LoggedPlayerDTO(player, token));
+                }
+            }
+            else
+            {
+                Player newPlayer = _mapper.Map<Player>(playerRegister);
+                newPlayer.Verified = true;
+
+                player = _playerService.AddItem(newPlayer);
+                if (player is null)
+                {
+                    return BadRequest("Could not authenticate player with google.");
+                }
+
+                string token = _jwtUtils.GenerateJwtToken(player);
+                return Ok(new LoggedPlayerDTO(player, token));
+            }
         }
 
         [HttpPut]

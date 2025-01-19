@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { importProvidersFrom, NgModule } from '@angular/core';
 import { JwtModule } from '@auth0/angular-jwt';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from '@abacritt/angularx-social-login';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,6 +55,7 @@ import { VerifyComponent } from './pages/auth/verify/verify.component';
     MatRadioModule,
     MatProgressSpinnerModule,
     SharedComponentsModule,
+    SocialLoginModule,
   ],
   providers: [
     importProvidersFrom(
@@ -66,7 +68,22 @@ import { VerifyComponent } from './pages/auth/verify/verify.component';
     ),
     provideHttpClient(
       withInterceptorsFromDi()
-    )
+    ),
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider('48746027409-if10lmj8kh5bfhr9l3pr7q47poiaucjs.apps.googleusercontent.com')
+          }
+        ],
+        onError: (err: any) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig
+    }
   ],
   bootstrap: [AppComponent]
 })

@@ -24,7 +24,7 @@ namespace Mops_fullstack.Server.Core.Services
             => GetItems().FirstOrDefault(player => player.Id==id);
 
         public Player? GetPlayerWithEmail(string Email)
-            => GetItems().FirstOrDefault(player => player.Email == Email && player.Verified);
+            => GetItems().FirstOrDefault(player => player.Email == Email);
 
         public List<Player> GetItems()
             => _unitOfWork.PlayerRepo.GetAllItems();

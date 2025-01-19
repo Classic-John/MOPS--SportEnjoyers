@@ -80,6 +80,11 @@ public partial class SportEnjoyersDatabaseContext : DbContext
                     });
         });
 
+        modelBuilder.Entity<Player>(entity =>
+        {
+            entity.HasIndex(e => e.Email, "IX_Player_Email").IsUnique();
+        });
+
         modelBuilder.Entity<Group>(entity =>
         {
             entity.HasIndex(e => e.OwnerId, "IX_Groups_OrganizerId");

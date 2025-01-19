@@ -80,7 +80,7 @@
             "proxyConfig": "src/proxy.conf.js",
             "port": 63635,
             "headers": {
-              "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+              "Content-Security-Policy": "default-src 'self' https://accounts.google.com https://accounts.google.com/gsi/fedcm.json https://accounts.google.com/gsi/log; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css https://accounts.google.com/gsi/style; font-src 'self' https://fonts.gstatic.com https://netdna.bootstrapcdn.com/font-awesome/3.2.1/font/fontawesome-webfont.woff https://netdna.bootstrapcdn.com/font-awesome/3.2.1/font/fontawesome-webfont.ttf"
             }
           }
         },

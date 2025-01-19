@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PlayerService } from '../../shared/services/player/player.service';
 import { AuthorizationService } from '../../shared/services/auth/authorization.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import PasswordValidator from '../../shared/validators/password-validator.validator';
 import { Equals } from '../../shared/validators/equals-validator.validator';
@@ -63,7 +63,7 @@ export class HomeComponent {
 
     this.playerService.update(player).subscribe({
       next: (newPlayer: LoggedPlayer) => {
-        this.authorizationService.setPlayer(JSON.stringify(newPlayer));
+        this.authorizationService.setPlayer(newPlayer);
         console.log("Successfully updated player data!");
         window.location.reload();
       }

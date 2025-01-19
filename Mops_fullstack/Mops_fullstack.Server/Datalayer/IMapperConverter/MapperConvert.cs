@@ -23,6 +23,7 @@ namespace Mops_fullstack.Server.Datalayer.IMapperConverter
             CreateMap<Player, PlayerDTO>(MemberList.Destination);
             CreateMap<PlayerDTO, Player>(MemberList.Source);
             CreateMap<PlayerRegisterDTO, Player>(MemberList.Source);
+            CreateMap<GoogleAuthDTO, Player>();
             CreateMap<PlayerLoginDTO, Player>(MemberList.Source);
 
             CreateMap<Group, GroupDTO>();

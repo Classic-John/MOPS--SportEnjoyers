@@ -13,13 +13,13 @@ public partial class Player :BaseEntity, IPlayer
     public string Name { get; set; } = null!;
 
     [Required]
-    public int Age { get; set; }
+    public int Age { get; set; } = 16;
+
+    public string? Password { get; set; }
+
+    public string? VerificationCode { get; set; }
 
     [Required]
-    public string Password { get; set; } = null!;
-
-    public string VerificationCode { get; set; } = "";
-
     public bool Verified { get; set; } = false;
 
     // public int? GoogleId { get; set; }

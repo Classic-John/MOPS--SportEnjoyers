@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
 import { CardlistComponent } from './cardlist/cardlist.component';
 import { ListComponent } from './list/list.component';
 import { CenteredComponent } from './centered/centered.component';
+import { GoogleAuthComponent } from './google-auth/google-auth.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { CenteredComponent } from './centered/centered.component';
     CardlistComponent,
     ListComponent,
     CenteredComponent,
+    GoogleAuthComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +41,7 @@ import { CenteredComponent } from './centered/centered.component';
     CardlistComponent,
     ListComponent,
     CenteredComponent,
+    GoogleAuthComponent,
   ]
 })
 export class SharedComponentsModule { }

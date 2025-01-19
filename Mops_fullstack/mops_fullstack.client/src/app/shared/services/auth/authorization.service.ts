@@ -6,6 +6,7 @@ import { LoginModel } from '../../interfaces/players/login.interface';
 import { LoggedPlayer } from '../../interfaces/players/logged-player.interface';
 import { RegisterModel } from '../../interfaces/players/register.interface';
 import { VerifyEmail } from '../../interfaces/players/verify.interface';
+import { GoogleAuth } from '../../interfaces/players/google-auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -29,23 +30,23 @@ export class AuthorizationService {
   }
 
   login(player: LoginModel) {
-    let headers = new HttpHeaders({
-      'Accept': 'text/plain'
-    });
-    let options = {
-      headers: headers,
-      responseType: 'text'
-    };
-
-    return this.apiService.post<LoginModel>(`${this.route}login`, player, options).pipe(
+    return this.apiService.post<LoginModel>(`${this.route}login`, player).pipe(
       map((player: LoggedPlayer) => {
         this.setPlayer(player);
       })
     );
   }
 
-  setPlayer(player: any) {
-    localStorage.setItem(AuthorizationService.key, player);
+  googleAuth(player: GoogleAuth) {
+    return this.apiService.put<GoogleAuth>(`${this.route}googleAuth`, player).pipe(
+      map((player: LoggedPlayer) => {
+        this.setPlayer(player);
+      })
+    )
+  }
+
+  setPlayer(player: LoggedPlayer) {
+    localStorage.setItem(AuthorizationService.key, JSON.stringify(player));
   }
 
   static getLoggedInPlayer(): LoggedPlayer | null {
